@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Login - Homemade Telugu Food</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "food-yellow": "#FFD700", // Updated to bright yellow
+            },
+            fontFamily: {
+              sans: ["Montserrat", "sans-serif"],
+              serif: ["Lora", "serif"],
+            },
+            letterSpacing: {
+              wider: ".05em",
+              widest: ".1em",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Montserrat", sans-serif;
+        line-height: 1.6;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Lora", serif;
+        line-height: 1.2;
+      }
+
+      .menu-item h3 {
+        font-family: "Montserrat", sans-serif;
+      }
+
+      .sticky-order-btn {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 98;
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .sticky-order-btn {
+          display: block;
+        }
+      }
+
+      /* Navbar CTA button styles */
+      .nav-cta-btn {
+        background-color: white;
+        color: #ffd700; /* Updated to bright yellow */
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .nav-cta-btn:hover {
+        background-color: #fff8dc; /* Slightly lighter hover effect */
+        transform: translateY(-1px);
+      }
+
+      .nav-cta-btn i {
+        margin-right: 0.25rem;
+      }
+
+      /* Highlighted CTA button */
+      .highlight-cta {
+        box-shadow: 0 4px 20px rgba(249, 178, 8, 0.3);
+        animation: pulse 2s infinite;
+      }
+
+      .quantity-control {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+      }
+      .quantity-btn {
+        width: 36px; /* Slightly larger for better usability */
+        height: 36px;
+        font-size: 1rem; /* Adjusted font size */
+        background-color: #ffd700;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 8px; /* Added rounded corners */
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .quantity-btn:hover {
+        transform: scale(1.1); /* Slight hover scale effect */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Added shadow on hover */
+      }
+
+      .quantity-display {
+        margin: 0 12px; /* Adjusted spacing */
+        font-weight: bold;
+        font-size: 1rem; /* Adjusted font size */
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* Enhanced button hover effects */
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Improved cart modal design */
+      #cartModal {
+        animation: fadeIn 0.3s ease-in-out;
+        backdrop-filter: blur(8px);
+        overflow-y: auto;
+        z-index: 100;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      /* Modal body scroll handling */
+      body.modal-open {
+        overflow: hidden;
+        width: 100%;
+        position: fixed;
+        height: 100%;
+        top: 0;
+        left: 0;
+      }
+
+      /* Add subtle hover effect for menu items */
+      .menu-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Enhanced View Cart button */
+      .view-cart-btn {
+        background-color: #ffd700; /* Updated to bright yellow */
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 9999px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+
+      .view-cart-btn:hover {
+        background-color: #ffc107; /* Slightly darker hover effect */
+      }
+
+      /* Improved cart modal on small screens */
+      @media (max-width: 640px) {
+        #cartModal .bg-white {
+          width: 95%;
+          padding: 1rem;
+        }
+
+        #cartItems {
+          font-size: 0.875rem;
+        }
+
+        .grid-cols-4 {
+          grid-template-columns: 2fr 1fr 1fr 0.5fr;
+        }
+
+        #cartModal .absolute.top-4.right-4 {
+          top: 0.5rem;
+          right: 0.5rem;
+        }
+      }
+
+      /* Updated light yellow color */
+      :root {
+        --light-food-yellow: #ffe066; /* Updated lighter yellow */
+      }
+
+      /* Update all references to the new light yellow */
+      .bg-food-yellow {
+        background-color: var(--light-food-yellow);
+      }
+
+      .text-food-yellow {
+        color: var(--light-food-yellow);
+        font-size: 1.125rem; /* Increased font size for price */
+        font-weight: bold;
+      }
+
+      .border-food-yellow {
+        border-color: var(--light-food-yellow);
+      }
+
+      /* Improved close button hover effect */
+      .cart-modal-close-btn {
+        transition: transform 0.2s ease, color 0.2s ease;
+      }
+
+      .cart-modal-close-btn:hover {
+        transform: scale(1.2);
+        color: var(--light-food-yellow); /* Updated hover effect */
+      }
+
+      .pickle-quantity {
+        border: 2px solid var(--light-food-yellow);
+        border-radius: 8px;
+        padding: 0.5rem;
+        font-size: 1rem;
+        color: #333;
+        background-color: #fff;
+        transition: all 0.3s ease;
+      }
+
+      .pickle-quantity:hover {
+        border-color: #f9b208;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .pickle-quantity:focus {
+        outline: none;
+        border-color: #f9b208;
+        box-shadow: 0 0 0 3px rgba(249, 178, 8, 0.3);
+      }
+
+      .blur-content {
+        transition: filter 0.3s ease;
+      }
+
+      .blur-content.active {
+        filter: blur(4px);
+      }
+
+      /* Style for the circular logo in the navbar */
+      .navbar-logo img {
+        height: 50px; /* Adjust the height of the logo */
+        width: 50px; /* Ensure the logo is a perfect circle */
+        border-radius: 50%; /* Make the logo circular */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .navbar-logo img:hover {
+        transform: scale(1.1); /* Slight zoom effect on hover */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+      }
+
+      /* Remove the scroll-top-btn styles */
+      .scroll-top-btn {
+        display: none; /* Hide the button instead of removing the style completely */
+      }
+
+      /* Trending tag styles */
+      .trending-tag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        box-shadow: 0 2px 10px rgba(255, 107, 107, 0.4);
+        z-index: 10;
+        animation: glowing 1.5s infinite;
+      }
+
+      /* Best seller tag styles */
+      .best-seller-tag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: linear-gradient(
+          45deg,
+          #ff6b6b,
+          #ffd93d
+        ); /* Changed to match trending tag */
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        box-shadow: 0 2px 10px rgba(255, 107, 107, 0.4); /* Updated shadow color */
+        z-index: 10;
+        animation: glowing 1.5s infinite;
+      }
+
+      @keyframes glowing {
+        0% {
+          box-shadow: 0 0 5px rgba(255, 255, 255, 0.3), 0 0 10px currentColor;
+        }
+        50% {
+          box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px currentColor;
+        }
+        100% {
+          box-shadow: 0 0 5px rgba(255, 255, 255, 0.3), 0 0 10px currentColor;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-white text-gray-800">
+    <div id="mainContent" class="blur-content">
+      <!-- Wrap all content except the cart modal in this div -->
+      <header class="bg-food-yellow shadow-md sticky top-0 z-50">
+        <div
+          class="container mx-auto px-4 py-4 flex items-center justify-between"
+        >
+          <div class="flex items-center">
+            <span class="navbar-logo">
+              <img src="images/food-login.webp" alt="Food Login Logo" />
+            </span>
+            <h1
+              class="text-2xl md:text-3xl font-bold text-white tracking-wide ml-3"
+            >
+              Food Login
+            </h1>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <!-- Desktop Navigation - Hidden on mobile -->
+            <nav class="hidden lg:block">
+              <ul class="flex items-center space-x-6">
+                <li>
+                  <a
+                    href="#home"
+                    class="text-white hover:text-gray-200 font-medium tracking-wide text-sm uppercase"
+                  >
+                    Home
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#about"
+                    class="text-white hover:text-gray-200 font-medium tracking-wide text-sm uppercase"
+                  >
+                    About
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#menu"
+                    class="text-white hover:text-gray-200 font-medium tracking-wide text-sm uppercase"
+                  >
+                    Menu
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#contact"
+                    class="text-white hover:text-gray-200 font-medium tracking-wide text-sm uppercase"
+                  >
+                    Contact
+                  </a>
+                </li>
+              </ul>
+            </nav>
+
+            <!-- View Cart Button - Always visible -->
+            <button
+              onclick="toggleCartModal()"
+              class="relative bg-white text-food-yellow px-3 sm:px-4 py-2 rounded-full font-medium hover:bg-gray-100 transition tracking-wide text-sm shadow-md flex items-center"
+            >
+              <i class="fas fa-shopping-cart sm:mr-2"></i>
+              <span class="hidden sm:inline">View Cart</span>
+              <!-- Text hidden on smallest screens -->
+              <span
+                id="cartQuantityBadge"
+                class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 hidden shadow-lg"
+              >
+                0
+              </span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Hero Section -->
+      <section
+        id="home"
+        class="py-16 bg-gradient-to-b from-food-yellow/20 to-white"
+      >
+        <div class="container mx-auto px-4 text-center">
+          <h2 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+            Tasty Homemade
+            <span class="text-2xl text-food-yellow">Rayalaseema Food</span>
+          </h2>
+          <p
+            class="text-lg mb-8 text-gray-700 font-light leading-relaxed max-w-2xl mx-auto"
+          >
+            At Foodlogin_8, we use only the best, locally sourced ingredients to
+            make our Chenikkaya Oliga and non-veg pickles. Every product is
+            crafted with care to bring out authentic Rayalaseema flavors.
+          </p>
+          <div
+            class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4"
+          >
+            <a
+              href="#menu"
+              class="bg-food-yellow text-white px-6 py-3 rounded-full font-medium hover:bg-yellow-500 transition text-center tracking-wide"
+            >
+              <i class="fas fa-utensils mr-2"></i>View Our Menu
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section id="about" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+          <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 relative">
+            <span class="relative inline-block">
+              About Food Login
+              <span
+                class="absolute bottom-0 left-0 w-full h-1 bg-food-yellow"
+              ></span>
+            </span>
+          </h2>
+          <div class="flex flex-col md:flex-row items-center">
+            <div class="md:w-1/3 mb-8 md:mb-0">
+              <img
+                src="images/food-login.webp"
+                alt="Home Chef"
+                class="rounded-full w-64 h-64 object-cover mx-auto border-4 border-food-yellow"
+              />
+            </div>
+            <div class="md:w-2/3 md:pl-12">
+              <p class="text-lg mb-6 leading-relaxed">
+                Hello food lovers! Welcome to Foodlogin_8! This is your place to
+                discover yummy food, especially if you love Rayalaseema flavors.
+              </p>
+              <p class="text-lg mb-6 leading-relaxed">
+                One of my highlights is Chenikkaya Oliga. I also offer non-veg
+                pickles, crafted with traditional recipes that bring out the
+                authentic taste of Rayalaseema.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Menu Section -->
+      <section id="menu" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+          <h2 class="text-3xl md:text-4xl font-bold text-center mb-6 relative">
+            <span class="relative inline-block">
+              Our Menu
+              <span
+                class="absolute bottom-0 left-0 w-full h-1 bg-food-yellow"
+              ></span>
+            </span>
+          </h2>
+          <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+            Try our homemade Telugu dishes made with love and traditional
+            recipes.
+          </p>
+          <div class="text-center mb-8">
+            <p
+              class="bg-food-yellow text-white font-bold text-lg md:text-xl py-3 px-6 rounded-lg shadow-lg inline-block"
+            >
+              Free home delivery on orders above 20 Oliga!
+            </p>
+          </div>
+
+          <!-- Menu Categories -->
+          <div class="mb-8 flex justify-center">
+            <div class="flex overflow-x-auto pb-2 space-x-2 no-scrollbar">
+              <button
+                class="menu-category-btn active whitespace-nowrap px-4 py-2 bg-food-yellow text-white rounded-full font-medium tracking-wide text-sm"
+                data-category="all"
+              >
+                All Items
+              </button>
+              <button
+                class="menu-category-btn whitespace-nowrap px-4 py-2 bg-white border border-food-yellow text-food-yellow rounded-full font-medium tracking-wide text-sm"
+                data-category="oliga"
+              >
+                Oliga
+              </button>
+              <button
+                class="menu-category-btn whitespace-nowrap px-4 py-2 bg-white border border-food-yellow text-food-yellow rounded-full font-medium tracking-wide text-sm"
+                data-category="non-veg-pickle"
+              >
+                Non-Veg Pickle
+              </button>
+              <button
+                class="menu-category-btn whitespace-nowrap px-4 py-2 bg-white border border-food-yellow text-food-yellow rounded-full font-medium tracking-wide text-sm"
+                data-category="sweets"
+              >
+                Sweets
+              </button>
+              <button
+                class="menu-category-btn whitespace-nowrap px-4 py-2 bg-white border border-food-yellow text-food-yellow rounded-full font-medium tracking-wide text-sm"
+                data-category="pickles-podulu"
+              >
+                Pickles & Podulu
+              </button>
+            </div>
+          </div>
+
+          <!-- Menu Items Grid -->
+          <div
+            id="menu-items"
+            class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 max-w-6xl mx-auto"
+          >
+            <!-- Oliga Section -->
+            <div
+              class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full relative"
+              data-category="oliga"
+              data-id="oliga-normal"
+            >
+              <span class="best-seller-tag">
+                <i class="fas fa-crown mr-1"></i>Best Seller
+              </span>
+              <img
+                src="images/oliga.webp"
+                alt="Chenikkaya Normal Oliga"
+                class="w-full h-28 md:h-40 object-cover"
+              />
+              <div class="p-2 md:p-4 text-center">
+                <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                  Chenikkaya Oliga
+                </h3>
+                <span
+                  class="text-food-yellow font-bold text-[16px] md:text-base"
+                  >₹30</span
+                >
+                <div class="quantity-control">
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, -1)"
+                  >
+                    -
+                  </button>
+                  <span class="quantity-display">0</span>
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, 1)"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+              data-category="oliga"
+              data-id="oliga-ghee"
+            >
+              <img
+                src="images/oliga.webp"
+                alt="Chenikkaya Ghee Oliga"
+                class="w-full h-28 md:h-40 object-cover"
+              />
+              <div class="p-2 md:p-4 text-center">
+                <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                  Chenikkaya Ghee Oliga
+                </h3>
+                <span
+                  class="text-food-yellow font-bold text-[16px] md:text-base"
+                  >₹40</span
+                >
+                <div class="quantity-control">
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, -1)"
+                  >
+                    -
+                  </button>
+                  <span class="quantity-display">0</span>
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, 1)"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+              data-category="oliga"
+              data-id="oliga-small"
+            >
+              <img
+                src="images/small-size-oliga.webp"
+                alt="Small Size Oliga"
+                class="w-full h-28 md:h-40 object-cover"
+              />
+              <div class="p-2 md:p-4 text-center">
+                <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                  Small Size Oliga
+                </h3>
+                <span
+                  class="text-food-yellow font-bold text-[16px] md:text-base"
+                  >Each ₹10</span
+                >
+                <div class="quantity-control" id="smallOligaControls">
+                  <button
+                    class="bg-food-yellow text-white px-4 py-2 rounded-full font-medium hover:bg-yellow-500 transition"
+                    onclick="addSmallOligaToCart(this)"
+                  >
+                    Add 50 to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+              data-category="oliga"
+              data-id="special-mix-oliga-normal"
+            >
+              <img
+                src="images/special-oliga.webp"
+                alt="Food-Login Special Mix Oliga (Normal)"
+                class="w-full h-28 md:h-40 object-cover"
+              />
+              <div class="p-2 md:p-4 text-center">
+                <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                  Food-Login Special Mix Oliga
+                </h3>
+                <span
+                  class="text-food-yellow font-bold text-[16px] md:text-base"
+                  >₹50</span
+                >
+                <div class="quantity-control">
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, -1)"
+                  >
+                    -
+                  </button>
+                  <span class="quantity-display">0</span>
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, 1)"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+              data-category="oliga"
+              data-id="special-mix-oliga-ghee"
+            >
+              <img
+                src="images/special-oliga.webp"
+                alt="Food-Login Special Mix Oliga (Ghee)"
+                class="w-full h-28 md:h-40 object-cover"
+              />
+              <div class="p-2 md:p-4 text-center">
+                <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                  Food-Login Special Mix Oliga (Ghee)
+                </h3>
+                <span
+                  class="text-food-yellow font-bold text-[16px] md:text-base"
+                  >₹60</span
+                >
+                <div class="quantity-control">
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, -1)"
+                  >
+                    -
+                  </button>
+                  <span class="quantity-display">0</span>
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, 1)"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Non-Veg Pickle Section -->
+            <div
+              class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full relative"
+              data-category="non-veg-pickle"
+              data-id="chicken-pickle"
+            >
+              <span class="trending-tag">
+                <i class="fas fa-fire-alt mr-1"></i>Trending
+              </span>
+              <img
+                src="images/chicken-pickle.webp"
+                alt="Chicken Pickle"
+                class="w-full h-28 md:h-40 object-cover"
+              />
+              <div class="p-2 md:p-4 text-center">
+                <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                  Chicken Pickle
+                </h3>
+                <!-- Dropdown for weight and price -->
+                <div class="mb-2">
+                  <select
+                    class="pickle-quantity w-full md:w-auto"
+                    onchange="handleWeightChange(this)"
+                  >
+                    <option value="100g" data-price="140">100g - ₹140</option>
+                    <option value="250g" data-price="249">250g - ₹249</option>
+                    <option value="500g" data-price="499">500g - ₹499</option>
+                    <option value="1kg" data-price="999">1kg - ₹999</option>
+                  </select>
+                </div>
+                <!-- Quantity control -->
+                <div class="quantity-control">
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, -1)"
+                  >
+                    -
+                  </button>
+                  <span class="quantity-display">0</span>
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, 1)"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+              data-category="non-veg-pickle"
+              data-id="gongura-chicken-pickle"
+            >
+              <img
+                src="images/gongura-chicken-pickle.webp"
+                alt="Gongura Chicken Pickle"
+                class="w-full h-28 md:h-40 object-cover"
+              />
+              <div class="p-2 md:p-4 text-center">
+                <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                  Gongura Chicken Pickle
+                </h3>
+                <div class="mb-2">
+                  <select
+                    class="pickle-quantity w-full md:w-auto"
+                    onchange="handleWeightChange(this)"
+                  >
+                    <option value="250g" data-price="299">250g - ₹299</option>
+                    <option value="500g" data-price="599">500g - ₹599</option>
+                    <option value="1kg" data-price="1199">1kg - ₹1199</option>
+                  </select>
+                </div>
+                <div class="quantity-control">
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, -1)"
+                  >
+                    -
+                  </button>
+                  <span class="quantity-display">0</span>
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, 1)"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+              data-category="non-veg-pickle"
+              data-id="gongura-mutton-pickle"
+            >
+              <img
+                src="images/gongura-mutton-pickle.webp"
+                alt="Mutton Pickle"
+                class="w-full h-28 md:h-40 object-cover"
+              />
+              <div class="p-2 md:p-4 text-center">
+                <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                  Mutton Pickle
+                </h3>
+                <div class="mb-2">
+                  <select
+                    class="pickle-quantity w-full md:w-auto"
+                    onchange="handleWeightChange(this)"
+                  >
+                    <option value="250g" data-price="449">250g - ₹449</option>
+                    <option value="500g" data-price="899">500g - ₹899</option>
+                    <option value="1kg" data-price="1799">1kg - ₹1799</option>
+                  </select>
+                </div>
+                <div class="quantity-control">
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, -1)"
+                  >
+                    -
+                  </button>
+                  <span class="quantity-display">0</span>
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, 1)"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Centered View Cart Button under Menu Section -->
+          <div class="flex justify-center mt-8">
+            <button
+              onclick="toggleCartModal()"
+              class="view-cart-btn flex items-center justify-center space-x-2"
+            >
+              <i class="fas fa-shopping-cart"></i>
+              <span>View Cart</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section id="contact" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+          <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 relative">
+            <span class="relative inline-block">
+              Ready to Order?
+              <span
+                class="absolute bottom-0 left-0 w-full h-1 bg-food-yellow"
+              ></span>
+            </span>
+          </h2>
+          <div
+            class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-8 text-center"
+          >
+            <h3 class="text-xl font-bold mb-4">Contact Information</h3>
+            <p class="mb-6 text-gray-600 leading-relaxed max-w-2xl mx-auto">
+              Get in touch with us to place your order or ask any questions
+            </p>
+
+            <div
+              class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8 mb-8"
+            >
+              <div class="flex items-center">
+                <i class="fas fa-phone text-food-yellow text-xl w-8"></i>
+                <a href="tel:+916301972788" class="hover:text-food-yellow"
+                  >+91 6301972788</a
+                >
+              </div>
+              <div class="flex items-center">
+                <i class="fab fa-instagram text-food-yellow text-xl w-8"></i>
+                <a
+                  href="https://www.instagram.com/foodlogin_8"
+                  target="_blank"
+                  class="hover:text-food-yellow"
+                  >@foodlogin_8</a
+                >
+              </div>
+            </div>
+
+            <div class="mt-8">
+              <!-- Removed the "Order via WhatsApp" button -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-food-yellow py-4">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="mb-3 md:mb-0">
+            <h2 class="text-xl font-bold text-white tracking-wide">
+              Food Login
+            </h2>
+            <p class="text-white/80 text-sm mt-1">
+              Homemade Telugu food with love
+            </p>
+          </div>
+
+          <div class="flex space-x-4">
+            <a
+              href="https://www.instagram.com/foodlogin_8"
+              target="_blank"
+              class="text-white hover:text-gray-200 text-xl"
+            >
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a
+              href="https://www.youtube.com/@foodlogin_8"
+              target="_blank"
+              class="text-white hover:text-gray-200 text-xl"
+            >
+              <i class="fab fa-youtube"></i>
+            </a>
+            <a
+              href="https://wa.me/916301972788"
+              target="_blank"
+              class="text-white hover:text-gray-200 text-xl"
+            >
+              <i class="fab fa-whatsapp"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div
+      id="cartModal"
+      class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div
+        class="bg-white rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2 p-4 sm:p-6 relative max-h-[80vh] overflow-y-auto"
+      >
+        <button
+          onclick="toggleCartModal()"
+          class="absolute top-2 sm:top-4 right-2 sm:right-4 text-gray-500 hover:text-gray-800 cart-modal-close-btn"
+        >
+          <i class="fas fa-times text-xl"></i>
+        </button>
+        <h3
+          class="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-center text-food-yellow"
+        >
+          Your Cart
+        </h3>
+        <div
+          class="grid grid-cols-[2fr_0.7fr_0.8fr_0.3fr] font-bold text-gray-700 mb-2 text-sm sm:text-base"
+        >
+          <span>Item</span>
+          <span class="text-center">Qty</span>
+          <span class="text-right">Price</span>
+          <span class="text-right"></span>
+          <!-- Blank heading for Delete column -->
+        </div>
+        <div id="cartItems" class="space-y-3 sm:space-y-4">
+          <!-- Cart items will be dynamically added here -->
+        </div>
+        <div
+          class="flex flex-col sm:flex-row justify-between items-center gap-3 mt-4 sm:mt-6"
+        >
+          <span
+            id="totalPrice"
+            class="text-base sm:text-lg font-bold text-gray-800"
+            >Total: ₹0</span
+          >
+          <button
+            onclick="placeOrder()"
+            class="bg-food-yellow text-white w-full sm:w-auto px-4 sm:px-6 py-2 rounded-full font-medium hover:bg-yellow-400 transition"
+          >
+            Place Order on WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add JavaScript for back to top button -->
+    <script src="scripts.js"></script>
+  </body>
+</html>
