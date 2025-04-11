@@ -3,13 +3,23 @@ import { Schema } from "mongoose";
 
 const OrderSchema = new Schema({
   name: String,
-  phone: String,
+  phone: {
+    type: Number,
+    required: true,
+    match: [/^[0-9]{10}$/, "Please enter a valid phone number"],
+
+},
   address: String,
   city: String,
-  pincode: String,
+  pincode: {
+    type: Number,
+    required: true,
+    match: [/^[0-9]{6}$/, "Please enter a valid pincode"]
+},
 
   cartItems: [
     {
+      _id: false,
       name: String,
       price: Number, // total price for this item (unit or weight based)
       qty: Number,   // for fixed items like burgers

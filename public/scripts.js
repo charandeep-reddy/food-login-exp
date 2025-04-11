@@ -21,7 +21,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   */
 
-
   // Menu Filtering
   const categoryButtons = document.querySelectorAll(".menu-category-btn");
   const menuItems = document.querySelectorAll(".menu-item");
@@ -392,31 +391,29 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      let orderMessage = "*Food Login Order Details:*\n\n";
-      let totalPrice = 0;
+      // Store cart items in localStorage
+      const cartStorage = {};
+      const priceStorage = {};
 
-      Array.from(cartItems.children).forEach((item, index) => {
+      Array.from(cartItems.children).forEach((item) => {
         const name = item.dataset.name;
         const weight = item.dataset.weight;
         const quantity = parseInt(item.dataset.quantity) || 0;
         const basePrice = parseInt(item.dataset.basePrice) || 0;
-        const itemTotal = basePrice * quantity;
+        const key = `${name}-${weight}`;
 
-        totalPrice += itemTotal;
-        orderMessage += `${index + 1}. ${name}${
-          weight !== "Single" ? ` (${weight})` : ""
-        } x ${quantity}\n`;
+        cartStorage[key] = quantity;
+        priceStorage[key] = basePrice;
       });
 
-      orderMessage += `\n*Total Amount: ₹${totalPrice}*`;
-      const encodedMessage = encodeURIComponent(orderMessage);
-      window.open(
-        `https://wa.me/916301972788?text=${encodedMessage}`,
-        "_blank"
-      );
+      localStorage.setItem("cart", JSON.stringify(cartStorage));
+      localStorage.setItem("prices", JSON.stringify(priceStorage));
+
+      // Redirect to cart page
+      window.location.href = "/checkout";
     } catch (error) {
-      console.error("Error placing order:", error);
-      alert("There was an error placing your order. Please try again.");
+      console.error("Error preparing order:", error);
+      alert("There was an error preparing your order. Please try again.");
     }
   }
 
