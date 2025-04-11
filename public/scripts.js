@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   */
 
+
   // Menu Filtering
   const categoryButtons = document.querySelectorAll(".menu-category-btn");
   const menuItems = document.querySelectorAll(".menu-item");

@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import user from '../models/users.js';
+import items from '../models/items.js';
 
 const app = express();
 app.use(express.json());
@@ -118,6 +119,21 @@ app.post('/admin/login', (req, res) => {
 app.get('/admin-dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'));
 })
+
+//add-items
+app.post('/add-items', async (req, res) => {
+    const { name, price, image, category, tag, weights } = req.body;
+    const itemInfo = await items.create ({
+        name,
+        price,
+        image,
+        category,
+        tag,
+        weights
+    });
+    res.status(200).json({ message: "Item added successfully", name, price, image, category, tag, weights });
+})
+
 
 
 
