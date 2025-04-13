@@ -9,6 +9,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   </head>
   <body class="bg-gray-50">
     <div class="container mx-auto px-4 py-8">
@@ -127,56 +128,111 @@
       });
 
       async function placeOrder() {
-        const form = document.getElementById("orderForm");
-        if (!form.checkValidity()) {
-          form.reportValidity();
-          return;
-        }
-
-        const formData = new FormData(form);
-        const cart = JSON.parse(localStorage.getItem("cart") || "{}");
-        const prices = JSON.parse(localStorage.getItem("prices") || "{}");
-
-        const cartItems = Object.entries(cart).map(([key, qty]) => {
-          const [name, weight] = key.split("-");
-          return {
-            name,
-            weight: weight === "Single" ? undefined : weight,
-            qty,
-            price: prices[key] * qty,
-          };
-        });
-
-        const total = cartItems.reduce((sum, item) => sum + item.price, 0);
-
-        const orderData = {
-          name: formData.get("name"),
-          phone: formData.get("phone"),
-          address: formData.get("address"),
-          city: formData.get("city"),
-          pincode: formData.get("pincode"),
-          cartItems,
-          total,
-        };
-
         try {
-          const response = await fetch("/place-order", {
+          const form = document.getElementById("orderForm");
+          if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+          }
+
+          const formData = new FormData(form);
+          const cart = JSON.parse(localStorage.getItem("cart") || "{}");
+          const prices = JSON.parse(localStorage.getItem("prices") || "{}");
+
+          if (Object.keys(cart).length === 0) {
+            alert("Your cart is empty. Please add items to place an order.");
+            window.location.href = "/";
+            return;
+          }
+
+          const cartItems = Object.entries(cart).map(([key, qty]) => {
+            const [name, weight] = key.split("-");
+            return {
+              name,
+              weight: weight === "Single" ? undefined : weight,
+              qty,
+              price: prices[key] * qty,
+            };
+          });
+
+          const total = cartItems.reduce((sum, item) => sum + item.price, 0);
+
+          const orderData = {
+            name: formData.get("name"),
+            phone: formData.get("phone"),
+            address: formData.get("address"),
+            city: formData.get("city"),
+            pincode: formData.get("pincode"),
+            cartItems,
+            total,
+          };
+
+          // Create Razorpay order
+          const response = await fetch("/create-order", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(orderData),
+            body: JSON.stringify({ amount: total }),
           });
 
-          if (response.ok) {
-            // Clear cart and redirect to confirmation page
-            localStorage.removeItem("cart");
-            localStorage.removeItem("prices");
-            alert("Order placed successfully!");
-            window.location.href = "/";
-          } else {
-            throw new Error("Failed to place order");
-          }
+          if (!response.ok) throw new Error("Failed to create order");
+          const orderResponse = await response.json();
+
+          // Initialize Razorpay payment
+          const options = {
+            key: "rzp_test_mvLbeeuphHnK5C", // Your Razorpay test key
+            amount: orderResponse.amount,
+            currency: "INR",
+            name: "Food Login",
+            description: "Food Order Payment",
+            image: "images/food-login.webp",
+            order_id: orderResponse.id,
+            handler: async function (response) {
+              try {
+                const verifyResponse = await fetch("/verify-payment", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_signature: response.razorpay_signature,
+                    orderData,
+                  }),
+                });
+
+                const verifyData = await verifyResponse.json();
+
+                if (verifyData.success) {
+                  localStorage.removeItem("cart");
+                  localStorage.removeItem("prices");
+                  alert("Order placed successfully!");
+                  window.location.href = "/";
+                } else {
+                  throw new Error("Payment verification failed");
+                }
+              } catch (error) {
+                console.error("Payment verification error:", error);
+                alert("Payment verification failed. Please try again.");
+              }
+            },
+            prefill: {
+              name: orderData.name,
+              contact: orderData.phone,
+              email: "", // Optional
+            },
+            theme: {
+              color: "#F97316",
+            },
+          };
+
+          const rzp = new Razorpay(options);
+          rzp.on("payment.failed", function (response) {
+            alert("Payment failed. Please try again.");
+          });
+          rzp.open();
         } catch (error) {
           console.error("Error:", error);
           alert("Failed to place order. Please try again.");
