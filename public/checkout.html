@@ -1,19 +1,169 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cart - Food Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Checkout - Food Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "food-yellow": "#FFD700",
+            },
+            fontFamily: {
+              sans: ["Montserrat", "sans-serif"],
+              serif: ["Lora", "serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Montserrat", sans-serif;
+        line-height: 1.6;
+        -webkit-text-size-adjust: 100%;
+        overscroll-behavior-y: contain;
+        -webkit-overflow-scrolling: touch;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      h1, h2, h3 {
+        font-family: "Lora", serif;
+        line-height: 1.2;
+      }
+      
+      /* Make the main content take up all available space */
+      .main-content {
+        flex: 1 0 auto;
+      }
+      
+      /* Make footer stick to bottom */
+      footer {
+        flex-shrink: 0;
+        margin-top: auto;
+      }
+      
+      .btn-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      .animate-fade-in {
+        animation: fadeIn 0.3s ease forwards;
+      }
+      
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #FFD700;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #e6c200;
+      }
+      
+      /* Better touch targets */
+      @media (max-width: 768px) {
+        button, a, .clickable {
+          min-height: 44px;
+          min-width: 44px;
+        }
+      }
+      
+      /* Loading overlay */
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.8);
+        z-index: 9999;
+      }
+
+      /* Social media icons */
+      .social-icon {
+        transition: transform 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .social-icon:hover {
+        transform: translateY(-3px);
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+    </style>
   </head>
   <body class="bg-gray-50">
-    <div class="container mx-auto px-4 py-8">
-      <h1 class="text-3xl font-bold text-center mb-8">Order Summary</h1>
+    <div id="loadingOverlay" class="loading-overlay hidden">
+      <div class="flex flex-col items-center">
+        <svg class="animate-spin h-12 w-12 text-food-yellow mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-gray-700 text-lg">Processing your order...</p>
+      </div>
+    </div>
+    
+    <header class="bg-white shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex justify-between items-center">
+          <a href="/" class="flex items-center">
+            <span class="navbar-logo">
+              <img src="images/food-login.webp" alt="Food Login Logo" class="h-10 w-10 rounded-full" />
+            </span>
+            <h1 class="text-xl font-bold text-gray-800 tracking-wide ml-3">
+              Food Login
+            </h1>
+          </a>
+          
+          <a href="/" class="text-gray-600 hover:text-food-yellow transition flex items-center">
+            <i class="fas fa-arrow-left mr-2"></i>
+            <span class="hidden sm:inline">Back to Menu</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-8 animate-fade-in main-content">
+      <h1 class="text-2xl md:text-3xl font-bold text-center mb-8">Order Summary</h1>
 
       <div class="grid md:grid-cols-2 gap-8">
         <!-- User Information Form -->
@@ -26,7 +176,7 @@
                 type="text"
                 name="name"
                 required
-                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-food-yellow"
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-food-yellow focus:border-food-yellow"
               />
             </div>
             <div>
@@ -36,7 +186,7 @@
                 name="phone"
                 pattern="[0-9]{10}"
                 required
-                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-food-yellow"
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-food-yellow focus:border-food-yellow"
               />
             </div>
             <div>
@@ -44,7 +194,7 @@
               <textarea
                 name="address"
                 required
-                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-food-yellow"
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-food-yellow focus:border-food-yellow"
               ></textarea>
             </div>
             <div>
@@ -53,7 +203,7 @@
                 type="text"
                 name="city"
                 required
-                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-food-yellow"
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-food-yellow focus:border-food-yellow"
               />
             </div>
             <div>
@@ -63,7 +213,7 @@
                 name="pincode"
                 pattern="[0-9]{6}"
                 required
-                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-food-yellow"
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-food-yellow focus:border-food-yellow"
               />
             </div>
           </form>
@@ -84,21 +234,95 @@
             </div>
             <button
               onclick="placeOrder()"
-              class="w-full bg-food-yellow text-white py-3 rounded-lg font-semibold hover:bg-yellow-500 transition"
+              class="w-full bg-food-yellow text-white py-3 rounded-lg font-semibold hover:bg-yellow-500 transition btn-hover flex items-center justify-center"
             >
-              Place Order
+              <i class="fas fa-shopping-cart mr-2"></i>
+              Place Order & Pay Now
             </button>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="bg-food-yellow py-6 text-white shadow-inner">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="mb-6 md:mb-0 text-center md:text-left">
+            <div class="flex items-center justify-center md:justify-start mb-3">
+              <img src="images/food-login.webp" alt="Food Login Logo" class="h-10 w-10 rounded-full border-2 border-white mr-3" />
+              <h2 class="text-2xl font-bold tracking-wide">
+                Food Login
+              </h2>
+            </div>
+            <p class="text-white/80 text-sm max-w-md">
+              Homemade Telugu food with love. Delicious, authentic flavors delivered to your doorstep.
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center md:items-end">
+            <div class="flex space-x-3 mb-4">
+              <a href="https://www.instagram.com/foodlogin_8" target="_blank" class="social-icon">
+                <i class="fab fa-instagram text-xl"></i>
+              </a>
+              <a href="https://www.youtube.com/@foodlogin_8" target="_blank" class="social-icon">
+                <i class="fab fa-youtube text-xl"></i>
+              </a>
+              <a href="https://wa.me/916301972788" target="_blank" class="social-icon">
+                <i class="fab fa-whatsapp text-xl"></i>
+              </a>
+            </div>
+            <p class="text-sm text-white/70">© 2023 Food Login. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Notification Toast -->
+    <div id="notificationToast" class="hidden fixed bottom-4 right-4 z-50 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center">
+      <i class="fas fa-exclamation-circle mr-2"></i>
+      <span id="notificationMessage"></span>
+    </div>
+
     <script>
+      // Show notification
+      function showNotification(message, isError = true) {
+        const toast = document.getElementById("notificationToast");
+        document.getElementById("notificationMessage").textContent = message;
+        
+        // Set color based on notification type
+        toast.className = `fixed bottom-4 right-4 z-50 ${isError ? 'bg-red-500' : 'bg-green-500'} text-white px-6 py-3 rounded-lg shadow-lg flex items-center`;
+        
+        // Show the toast
+        toast.classList.remove("hidden");
+        
+        // Hide after 3 seconds
+        setTimeout(() => {
+          toast.classList.add("hidden");
+        }, 3000);
+      }
+      
+      // Show/hide loading overlay
+      function toggleLoading(show) {
+        document.getElementById('loadingOverlay').classList.toggle('hidden', !show);
+      }
+
       // Load cart items from localStorage on page load
       document.addEventListener("DOMContentLoaded", function () {
         const cartItems = document.getElementById("cartItems");
         const cart = JSON.parse(localStorage.getItem("cart") || "{}");
         let total = 0;
+
+        if (Object.keys(cart).length === 0) {
+          cartItems.innerHTML = `<div class="text-center py-8">
+            <i class="fas fa-shopping-cart text-gray-300 text-5xl mb-4"></i>
+            <p class="text-gray-500">Your cart is empty</p>
+            <a href="/" class="mt-4 inline-block bg-food-yellow text-white px-4 py-2 rounded-lg hover:bg-yellow-500 transition">Go back to menu</a>
+          </div>`;
+          document.querySelector('button[onclick="placeOrder()"]').disabled = true;
+          document.querySelector('button[onclick="placeOrder()"]').classList.add('opacity-50', 'cursor-not-allowed');
+          return;
+        }
 
         Object.entries(cart).forEach(([key, quantity]) => {
           const [itemName, weight] = key.split("-");
@@ -140,10 +364,14 @@
           const prices = JSON.parse(localStorage.getItem("prices") || "{}");
 
           if (Object.keys(cart).length === 0) {
-            alert("Your cart is empty. Please add items to place an order.");
-            window.location.href = "/";
+            showNotification("Your cart is empty. Please add items to place an order.", true);
+            setTimeout(() => {
+              window.location.href = "/";
+            }, 1500);
             return;
           }
+
+          toggleLoading(true);
 
           const cartItems = Object.entries(cart).map(([key, qty]) => {
             const [name, weight] = key.split("-");
@@ -178,6 +406,8 @@
 
           if (!response.ok) throw new Error("Failed to create order");
           const orderResponse = await response.json();
+          
+          toggleLoading(false);
 
           // Initialize Razorpay payment
           const options = {
@@ -190,6 +420,8 @@
             order_id: orderResponse.id,
             handler: async function (response) {
               try {
+                toggleLoading(true);
+                
                 const verifyResponse = await fetch("/verify-payment", {
                   method: "POST",
                   headers: {
@@ -208,14 +440,18 @@
                 if (verifyData.success) {
                   localStorage.removeItem("cart");
                   localStorage.removeItem("prices");
-                  alert("Order placed successfully!");
-                  window.location.href = "/";
+                  showNotification("Order placed successfully!", false);
+                  setTimeout(() => {
+                    window.location.href = "/";
+                  }, 1500);
                 } else {
                   throw new Error("Payment verification failed");
                 }
               } catch (error) {
                 console.error("Payment verification error:", error);
-                alert("Payment verification failed. Please try again.");
+                showNotification("Payment verification failed. Please try again.", true);
+              } finally {
+                toggleLoading(false);
               }
             },
             prefill: {
@@ -224,20 +460,24 @@
               email: "", // Optional
             },
             theme: {
-              color: "#F97316",
+              color: "#FFD700",
             },
           };
 
           const rzp = new Razorpay(options);
           rzp.on("payment.failed", function (response) {
-            alert("Payment failed. Please try again.");
+            showNotification("Payment failed. Please try again.", true);
           });
           rzp.open();
         } catch (error) {
           console.error("Error:", error);
-          alert("Failed to place order. Please try again.");
+          showNotification("Failed to place order. Please try again.", true);
+          toggleLoading(false);
         }
       }
+      
+      // Add touchstart handling for better mobile responsiveness
+      document.addEventListener('touchstart', function() {}, {passive: true});
     </script>
   </body>
 </html>

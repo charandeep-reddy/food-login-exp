@@ -2,7 +2,7 @@
 <html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Food Login - Homemade Telugu Food</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
@@ -15,12 +15,13 @@
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="css/styles.css">
     <script>
       tailwind.config = {
         theme: {
           extend: {
             colors: {
-              "food-yellow": "#FFD700", // Updated to bright yellow
+              "food-yellow": "#FFD700",
             },
             fontFamily: {
               sans: ["Montserrat", "sans-serif"],
@@ -35,41 +36,14 @@
       };
     </script>
     <style>
-      body {
-        font-family: "Montserrat", sans-serif;
-        line-height: 1.6;
-      }
-
-      h1,
-      h2,
-      h3 {
-        font-family: "Lora", serif;
-        line-height: 1.2;
-      }
-
       .menu-item h3 {
         font-family: "Montserrat", sans-serif;
-      }
-
-      .sticky-order-btn {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 98;
-        display: none;
-      }
-
-      @media (max-width: 768px) {
-        .sticky-order-btn {
-          display: block;
-        }
       }
 
       /* Navbar CTA button styles */
       .nav-cta-btn {
         background-color: white;
-        color: #ffd700; /* Updated to bright yellow */
+        color: #ffd700;
         padding: 0.5rem 1rem;
         border-radius: 9999px;
         font-weight: 600;
@@ -77,7 +51,7 @@
       }
 
       .nav-cta-btn:hover {
-        background-color: #fff8dc; /* Slightly lighter hover effect */
+        background-color: #fff8dc;
         transform: translateY(-1px);
       }
 
@@ -98,28 +72,28 @@
         margin-top: 10px;
       }
       .quantity-btn {
-        width: 36px; /* Slightly larger for better usability */
+        width: 36px;
         height: 36px;
-        font-size: 1rem; /* Adjusted font size */
+        font-size: 1rem;
         background-color: #ffd700;
         color: white;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        border-radius: 8px; /* Added rounded corners */
+        border-radius: 8px;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
 
       .quantity-btn:hover {
-        transform: scale(1.1); /* Slight hover scale effect */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Added shadow on hover */
+        transform: scale(1.1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
 
       .quantity-display {
-        margin: 0 12px; /* Adjusted spacing */
+        margin: 0 12px;
         font-weight: bold;
-        font-size: 1rem; /* Adjusted font size */
+        font-size: 1rem;
       }
 
       @keyframes pulse {
@@ -134,12 +108,68 @@
         }
       }
 
-      /* Enhanced button hover effects */
-      button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      /* Modal body scroll handling */
+      body.modal-open {
+        overflow: hidden;
+        width: 100%;
+        position: fixed;
+        height: 100%;
+        top: 0;
+        left: 0;
       }
 
+      /* Add subtle hover effect for menu items */
+      .menu-item {
+        transition: all 0.3s ease;
+      }
+      
+      .menu-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Enhanced View Cart button */
+      .view-cart-btn {
+        background-color: #ffd700;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 9999px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+
+      .view-cart-btn:hover {
+        background-color: #ffc107;
+      }
+
+      /* Trending tag styles */
+      .trending-tag, .best-seller-tag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        box-shadow: 0 2px 10px rgba(255, 107, 107, 0.4);
+        z-index: 10;
+        animation: glowing 1.5s infinite;
+      }
+
+      @keyframes glowing {
+        0% {
+          box-shadow: 0 0 5px rgba(255, 255, 255, 0.3), 0 0 10px currentColor;
+        }
+        50% {
+          box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px currentColor;
+        }
+        100% {
+          box-shadow: 0 0 5px rgba(255, 255, 255, 0.3), 0 0 10px currentColor;
+        }
+      }
+      
       /* Improved cart modal design */
       #cartModal {
         animation: fadeIn 0.3s ease-in-out;
@@ -159,89 +189,29 @@
         }
       }
 
-      /* Modal body scroll handling */
-      body.modal-open {
-        overflow: hidden;
-        width: 100%;
-        position: fixed;
-        height: 100%;
-        top: 0;
-        left: 0;
+      .blur-content {
+        transition: filter 0.3s ease;
       }
 
-      /* Add subtle hover effect for menu items */
-      .menu-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      .blur-content.active {
+        filter: blur(4px);
       }
 
-      /* Enhanced View Cart button */
-      .view-cart-btn {
-        background-color: #ffd700; /* Updated to bright yellow */
-        color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 9999px;
-        font-weight: bold;
-        transition: all 0.3s ease;
+      /* Style for the circular logo in the navbar */
+      .navbar-logo img {
+        height: 50px;
+        width: 50px;
+        border-radius: 50%;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
 
-      .view-cart-btn:hover {
-        background-color: #ffc107; /* Slightly darker hover effect */
+      .navbar-logo img:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       }
-
-      /* Improved cart modal on small screens */
-      @media (max-width: 640px) {
-        #cartModal .bg-white {
-          width: 95%;
-          padding: 1rem;
-        }
-
-        #cartItems {
-          font-size: 0.875rem;
-        }
-
-        .grid-cols-4 {
-          grid-template-columns: 2fr 1fr 1fr 0.5fr;
-        }
-
-        #cartModal .absolute.top-4.right-4 {
-          top: 0.5rem;
-          right: 0.5rem;
-        }
-      }
-
-      /* Updated light yellow color */
-      :root {
-        --light-food-yellow: #ffe066; /* Updated lighter yellow */
-      }
-
-      /* Update all references to the new light yellow */
-      .bg-food-yellow {
-        background-color: var(--light-food-yellow);
-      }
-
-      .text-food-yellow {
-        color: var(--light-food-yellow);
-        font-size: 1.125rem; /* Increased font size for price */
-        font-weight: bold;
-      }
-
-      .border-food-yellow {
-        border-color: var(--light-food-yellow);
-      }
-
-      /* Improved close button hover effect */
-      .cart-modal-close-btn {
-        transition: transform 0.2s ease, color 0.2s ease;
-      }
-
-      .cart-modal-close-btn:hover {
-        transform: scale(1.2);
-        color: var(--light-food-yellow); /* Updated hover effect */
-      }
-
+      
       .pickle-quantity {
-        border: 2px solid var(--light-food-yellow);
+        border: 2px solid #ffd700;
         border-radius: 8px;
         padding: 0.5rem;
         font-size: 1rem;
@@ -261,153 +231,208 @@
         box-shadow: 0 0 0 3px rgba(249, 178, 8, 0.3);
       }
 
-      .blur-content {
-        transition: filter 0.3s ease;
+      /* Improved navbar styles */
+      .navbar {
+        transition: all 0.3s ease;
       }
-
-      .blur-content.active {
-        filter: blur(4px);
+      
+      .navbar.scrolled {
+        background-color: #FFD700;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
       }
-
-      /* Style for the circular logo in the navbar */
-      .navbar-logo img {
-        height: 50px; /* Adjust the height of the logo */
-        width: 50px; /* Ensure the logo is a perfect circle */
-        border-radius: 50%; /* Make the logo circular */
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      
+      .navbar-link {
+        position: relative;
+        transition: all 0.3s ease;
       }
-
-      .navbar-logo img:hover {
-        transform: scale(1.1); /* Slight zoom effect on hover */
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
-      }
-
-      /* Remove the scroll-top-btn styles */
-      .scroll-top-btn {
-        display: none; /* Hide the button instead of removing the style completely */
-      }
-
-      /* Trending tag styles */
-      .trending-tag {
+      
+      .navbar-link::after {
+        content: '';
         position: absolute;
-        top: 10px;
-        right: 10px;
-        background: linear-gradient(45deg, #ff6b6b, #ffd93d);
-        color: white;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: bold;
-        box-shadow: 0 2px 10px rgba(255, 107, 107, 0.4);
-        z-index: 10;
-        animation: glowing 1.5s infinite;
+        width: 0;
+        height: 2px;
+        background: white;
+        left: 0;
+        bottom: -4px;
+        transition: width 0.3s ease;
       }
-
-      /* Best seller tag styles */
-      .best-seller-tag {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: linear-gradient(
-          45deg,
-          #ff6b6b,
-          #ffd93d
-        ); /* Changed to match trending tag */
-        color: white;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: bold;
-        box-shadow: 0 2px 10px rgba(255, 107, 107, 0.4); /* Updated shadow color */
-        z-index: 10;
-        animation: glowing 1.5s infinite;
+      
+      .navbar-link:hover::after {
+        width: 100%;
       }
-
-      @keyframes glowing {
-        0% {
-          box-shadow: 0 0 5px rgba(255, 255, 255, 0.3), 0 0 10px currentColor;
-        }
-        50% {
-          box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px currentColor;
-        }
-        100% {
-          box-shadow: 0 0 5px rgba(255, 255, 255, 0.3), 0 0 10px currentColor;
-        }
+      
+      .navbar-link.active::after {
+        width: 100%;
+      }
+      
+      /* Mobile menu */
+      .mobile-menu {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 80%;
+        max-width: 300px;
+        background-color: white;
+        z-index: 100;
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
+        padding: 1.5rem;
+        box-shadow: -2px 0 8px rgba(0,0,0,0.15);
+        overflow-y: auto;
+      }
+      
+      .mobile-menu.open {
+        transform: translateX(0);
+      }
+      
+      .mobile-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 99;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease-in-out;
+      }
+      
+      .mobile-menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
       }
     </style>
   </head>
   <body class="bg-white text-gray-800">
+    <div id="loadingOverlay" class="loading-overlay hidden">
+      <div class="flex flex-col items-center">
+        <svg class="animate-spin h-12 w-12 text-food-yellow mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-gray-700 text-lg">Loading menu...</p>
+      </div>
+    </div>
+    
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenuOverlay" class="mobile-menu-overlay" onclick="closeMobileMenu()"></div>
+    
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu">
+      <div class="flex justify-between items-center mb-6 border-b pb-4">
+        <div class="flex items-center">
+          <img src="images/food-login.webp" alt="Food Login Logo" class="h-10 w-10 rounded-full" />
+          <h2 class="text-xl font-bold text-gray-800 tracking-wide ml-3">Food Login</h2>
+        </div>
+        <button onclick="closeMobileMenu()" class="text-gray-500 hover:text-gray-700">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <nav>
+        <ul class="space-y-4">
+          <li>
+            <a href="#home" onclick="closeMobileMenu()" class="block px-4 py-2 text-lg font-medium text-gray-700 hover:bg-food-yellow/10 hover:text-food-yellow rounded-lg">
+              <i class="fas fa-home w-8"></i> Home
+            </a>
+          </li>
+          <li>
+            <a href="#about" onclick="closeMobileMenu()" class="block px-4 py-2 text-lg font-medium text-gray-700 hover:bg-food-yellow/10 hover:text-food-yellow rounded-lg">
+              <i class="fas fa-info-circle w-8"></i> About
+            </a>
+          </li>
+          <li>
+            <a href="#menu" onclick="closeMobileMenu()" class="block px-4 py-2 text-lg font-medium text-gray-700 hover:bg-food-yellow/10 hover:text-food-yellow rounded-lg">
+              <i class="fas fa-utensils w-8"></i> Menu
+            </a>
+          </li>
+          <li>
+            <a href="#contact" onclick="closeMobileMenu()" class="block px-4 py-2 text-lg font-medium text-gray-700 hover:bg-food-yellow/10 hover:text-food-yellow rounded-lg">
+              <i class="fas fa-phone w-8"></i> Contact
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="mt-8 pt-6 border-t">
+        <button onclick="toggleCartModal(); closeMobileMenu();" class="w-full bg-food-yellow text-white py-3 rounded-lg font-semibold hover:bg-yellow-500 transition flex items-center justify-center">
+          <i class="fas fa-shopping-cart mr-2"></i> View Cart
+        </button>
+      </div>
+      <div class="mt-6 flex justify-center space-x-4">
+        <a href="https://www.instagram.com/foodlogin_8" target="_blank" class="text-gray-600 hover:text-food-yellow text-xl">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://www.youtube.com/@foodlogin_8" target="_blank" class="text-gray-600 hover:text-food-yellow text-xl">
+          <i class="fab fa-youtube"></i>
+        </a>
+        <a href="https://wa.me/916301972788" target="_blank" class="text-gray-600 hover:text-food-yellow text-xl">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </div>
+    </div>
+    
     <div id="mainContent" class="blur-content">
-      <!-- Wrap all content except the cart modal in this div -->
-      <header class="bg-food-yellow shadow-md sticky top-0 z-50">
-        <div
-          class="container mx-auto px-4 py-4 flex items-center justify-between"
-        >
-          <div class="flex items-center">
-            <span class="navbar-logo">
-              <img src="images/food-login.webp" alt="Food Login Logo" />
-            </span>
-            <h1
-              class="text-2xl md:text-3xl font-bold text-white tracking-wide ml-3"
-            >
-              Food Login
-            </h1>
-          </div>
-
-          <div class="flex items-center space-x-4">
-            <!-- Desktop Navigation - Hidden on mobile -->
-            <nav class="hidden lg:block">
-              <ul class="flex items-center space-x-6">
-                <li>
-                  <a
-                    href="#home"
-                    class="text-white hover:text-gray-200 font-medium tracking-wide text-sm uppercase"
-                  >
-                    Home
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#about"
-                    class="text-white hover:text-gray-200 font-medium tracking-wide text-sm uppercase"
-                  >
-                    About
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#menu"
-                    class="text-white hover:text-gray-200 font-medium tracking-wide text-sm uppercase"
-                  >
-                    Menu
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#contact"
-                    class="text-white hover:text-gray-200 font-medium tracking-wide text-sm uppercase"
-                  >
-                    Contact
-                  </a>
-                </li>
-              </ul>
-            </nav>
-
-            <!-- View Cart Button - Always visible -->
-            <button
-              onclick="toggleCartModal()"
-              class="relative bg-white text-food-yellow px-3 sm:px-4 py-2 rounded-full font-medium hover:bg-gray-100 transition tracking-wide text-sm shadow-md flex items-center"
-            >
-              <i class="fas fa-shopping-cart sm:mr-2"></i>
-              <span class="hidden sm:inline">View Cart</span>
-              <!-- Text hidden on smallest screens -->
-              <span
-                id="cartQuantityBadge"
-                class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 hidden shadow-lg"
-              >
-                0
+      <!-- Improved Navbar -->
+      <header class="bg-food-yellow shadow-md sticky top-0 z-50 navbar">
+        <div class="container mx-auto px-4 py-4">
+          <div class="flex items-center justify-between">
+            <a href="/" class="flex items-center">
+              <span class="navbar-logo">
+                <img src="images/food-login.webp" alt="Food Login Logo" class="h-10 w-10 rounded-full border-2 border-white/70" />
               </span>
-            </button>
+              <h1 class="text-xl md:text-2xl font-bold text-white tracking-wide ml-3">
+                Food Login
+              </h1>
+            </a>
+
+            <div class="flex items-center space-x-6">
+              <!-- Desktop Navigation - Hidden on mobile -->
+              <nav class="hidden lg:block">
+                <ul class="flex items-center space-x-8">
+                  <li>
+                    <a href="#home" class="navbar-link active text-white hover:text-white/90 font-medium tracking-wide text-sm uppercase">
+                      Home
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#about" class="navbar-link text-white hover:text-white/90 font-medium tracking-wide text-sm uppercase">
+                      About
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#menu" class="navbar-link text-white hover:text-white/90 font-medium tracking-wide text-sm uppercase">
+                      Menu
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#contact" class="navbar-link text-white hover:text-white/90 font-medium tracking-wide text-sm uppercase">
+                      Contact
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+
+              <!-- View Cart Button -->
+              <button
+                onclick="toggleCartModal()"
+                class="relative bg-white text-food-yellow px-3 sm:px-4 py-2 rounded-full font-medium hover:bg-gray-100 transition tracking-wide text-sm shadow-md flex items-center"
+              >
+                <i class="fas fa-shopping-cart sm:mr-2"></i>
+                <span class="hidden sm:inline">View Cart</span>
+                <span
+                  id="cartQuantityBadge"
+                  class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 hidden shadow-lg"
+                >
+                  0
+                </span>
+              </button>
+              
+              <!-- Mobile menu button -->
+              <button id="mobileMenuBtn" class="lg:hidden text-white hover:text-white/80" onclick="openMobileMenu()">
+                <i class="fas fa-bars text-2xl"></i>
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -415,7 +440,7 @@
       <!-- Hero Section -->
       <section
         id="home"
-        class="py-16 bg-gradient-to-b from-food-yellow/20 to-white"
+        class="py-16 bg-gradient-to-b from-food-yellow/20 to-white animate-fade-in"
       >
         <div class="container mx-auto px-4 text-center">
           <h2 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">
@@ -443,7 +468,7 @@
       </section>
 
       <!-- About Section -->
-      <section id="about" class="py-16 bg-white">
+      <section id="about" class="py-16 bg-white animate-fade-in">
         <div class="container mx-auto px-4">
           <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 relative">
             <span class="relative inline-block">
@@ -957,7 +982,7 @@
       class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
     >
       <div
-        class="bg-white rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2 p-4 sm:p-6 relative max-h-[80vh] overflow-y-auto"
+        class="bg-white rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2 p-4 sm:p-6 relative max-h-[80vh] overflow-y-auto animate-fade-in"
       >
         <button
           onclick="toggleCartModal()"
@@ -1000,7 +1025,61 @@
       </div>
     </div>
 
-    <!-- Add JavaScript for back to top button -->
+    <!-- Notification Toast -->
+    <div id="notificationToast" class="hidden fixed bottom-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center">
+      <i class="fas fa-check-circle mr-2"></i>
+      <span id="notificationMessage"></span>
+    </div>
+
+    <!-- Add JavaScript for common functionality -->
+    <script src="js/common.js"></script>
     <script src="scripts.js"></script>
+    <script>
+      // Mobile menu functionality
+      function openMobileMenu() {
+        document.getElementById('mobileMenu').classList.add('open');
+        document.getElementById('mobileMenuOverlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+      
+      function closeMobileMenu() {
+        document.getElementById('mobileMenu').classList.remove('open');
+        document.getElementById('mobileMenuOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+      }
+      
+      // Navbar scroll effect
+      window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+      });
+      
+      // Highlight active nav item based on scroll position
+      window.addEventListener('scroll', function() {
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.navbar-link');
+        
+        let current = '';
+        
+        sections.forEach(section => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.clientHeight;
+          if (pageYOffset >= (sectionTop - sectionHeight/3)) {
+            current = section.getAttribute('id');
+          }
+        });
+        
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          if(link.getAttribute('href') === `#${current}`) {
+            link.classList.add('active');
+          }
+        });
+      });
+    </script>
   </body>
 </html>

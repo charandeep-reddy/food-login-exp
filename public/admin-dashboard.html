@@ -1,237 +1,773 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Admin Dashboard - Food Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "food-yellow": "#FFD700",
+            },
+            fontFamily: {
+              sans: ["Montserrat", "sans-serif"],
+              serif: ["Lora", "serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Montserrat", sans-serif;
+        line-height: 1.6;
+        -webkit-text-size-adjust: 100%;
+      }
+      h1, h2, h3 {
+        font-family: "Lora", serif;
+        line-height: 1.2;
+      }
+      .btn-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+      }
+      .sidebar {
+        transition: all 0.3s ease;
+      }
+      @media (max-width: 768px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+      }
+      .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #FFD700;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #e6c200;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.3s ease forwards;
+      }
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.8);
+        z-index: 9999;
+      }
+      /* Enhanced mobile responsiveness */
+      @media (max-width: 640px) {
+        .table-container {
+          margin-left: -1rem;
+          margin-right: -1rem;
+          width: calc(100% + 2rem);
+        }
+        table th, table td {
+          padding-left: 0.5rem;
+          padding-right: 0.5rem;
+        }
+        .truncate-mobile {
+          max-width: 120px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+      /* Better mobile touch targets */
+      @media (max-width: 768px) {
+        button, a, .clickable {
+          min-height: 44px; /* Apple's recommended minimum touch target size */
+          min-width: 44px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        /* Adjust padding for smaller screens */
+        .mobile-container {
+          padding-left: 0.75rem;
+          padding-right: 0.75rem;
+        }
+        /* Stack flex items on mobile */
+        .mobile-stack {
+          flex-direction: column;
+        }
+        .mobile-stack > * {
+          width: 100%;
+          margin-bottom: 0.5rem;
+        }
+        .mobile-stack > *:last-child {
+          margin-bottom: 0;
+        }
+        /* Modal adjustments for mobile */
+        .modal-mobile {
+          width: 95%;
+          max-width: 95%;
+          margin: 0 auto;
+        }
+      }
+      /* Better scroll handling for mobile */
+      html, body {
+        overscroll-behavior-y: contain; /* Prevents pull-to-refresh in mobile browsers */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS devices */
+      }
+      /* Improved order detail view for mobile */
+      .order-detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      /* Fix for touch events on mobile */
+      .tap-highlight {
+        -webkit-tap-highlight-color: rgba(255, 215, 0, 0.3);
+      }
+      /* Order details modal */
+      #orderDetailsModal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 50;
+        overflow-y: auto;
+      }
+      .modal-content {
+        background-color: white;
+        border-radius: 0.5rem;
+        width: 90%;
+        max-width: 600px;
+        margin: 2rem auto;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      @media (max-width: 640px) {
+        .modal-content {
+          width: 95%;
+          margin: 1rem auto;
+        }
+        .display-none-mobile {
+          display: none;
+        }
+        .mobile-text-sm {
+          font-size: 0.875rem;
+        }
+        .mobile-py-2 {
+          padding-top: 0.5rem;
+          padding-bottom: 0.5rem;
+        }
+      }
+      /* Mobile optimizations */
+      @media (max-width: 480px) {
+        .xs-text-sm { font-size: 0.875rem; }
+        .xs-p-2 { padding: 0.5rem; }
+        .xs-mt-2 { margin-top: 0.5rem; }
+        .xs-w-full { width: 100%; }
+      }
+      /* iOS specific fixes */  
+      @supports (-webkit-touch-callout: none) {
+        .ios-bottom-padding {
+          padding-bottom: env(safe-area-inset-bottom);
+        }
+      }
+      /* Better touch targets */
+      .touch-target {
+        min-height: 44px;
+        min-width: 44px;
+      }
+    </style>
   </head>
-  <body class="bg-gray-100">
-    <!-- Header -->
-    <header class="bg-food-yellow shadow-md">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="flex justify-between items-center">
-          <h1 class="text-2xl font-bold text-white">Admin Dashboard</h1>
-          <button
-            onclick="logout()"
-            class="bg-white px-4 py-2 rounded-md text-food-yellow hover:bg-gray-50"
-          >
-            Logout
+  <body class="bg-gray-50 min-h-screen">
+    <div id="loadingOverlay" class="loading-overlay">
+      <div class="flex flex-col items-center">
+        <svg class="animate-spin h-12 w-12 text-food-yellow mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-gray-700 text-lg">Loading dashboard...</p>
+      </div>
+    </div>
+    <!-- Sidebar for Mobile -->
+    <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-50 sidebar transform -translate-x-full md:translate-x-0">
+      <div class="p-6">
+        <div class="flex items-center mb-8">
+          <span class="navbar-logo">
+            <img src="images/food-login.webp" alt="Food Login Logo" class="h-10 w-10 rounded-full" />
+          </span>
+          <h1 class="text-xl font-bold text-gray-800 tracking-wide ml-3">
+            Food Login
+          </h1>
+          <button id="closeSidebarBtn" class="ml-auto text-gray-400 hover:text-gray-600 md:hidden">
+            <i class="fas fa-times"></i>
           </button>
         </div>
+        <nav>
+          <ul class="space-y-2">
+            <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-700 bg-food-yellow/10 rounded-lg font-medium">
+                <i class="fas fa-tachometer-alt w-6"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:bg-food-yellow/10 rounded-lg transition font-medium">
+                <i class="fas fa-shopping-bag w-6"></i>
+                <span>Orders</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:bg-food-yellow/10 rounded-lg transition font-medium">
+                <i class="fas fa-utensils w-6"></i>
+                <span>Products</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:bg-food-yellow/10 rounded-lg transition font-medium">
+                <i class="fas fa-users w-6"></i>
+                <span>Customers</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
-    </header>
-
+      <div class="absolute bottom-0 left-0 right-0 p-6">
+        <button
+          onclick="logout()"
+          class="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-red-500 hover:bg-red-600 transition"
+        >
+          <i class="fas fa-sign-out-alt mr-2"></i> Logout
+        </button>
+      </div>
+    </div>
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-semibold">Orders</h2>
-          <div class="flex space-x-4">
-            <div class="relative">
-              <input
-                type="text"
-                id="searchInput"
-                placeholder="Search orders..."
-                class="pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-food-yellow"
-              />
-              <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+    <div class="md:pl-64">
+      <!-- Header -->
+      <header class="bg-white shadow-sm">
+        <div class="mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center">
+              <button id="openSidebarBtn" class="text-gray-600 mr-4 md:hidden">
+                <i class="fas fa-bars text-xl"></i>
+              </button>
+              <h1 class="text-xl font-bold text-gray-800">Admin Dashboard</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+              <span class="hidden sm:inline-block text-sm text-gray-600">Welcome, Admin</span>
+              <button
+                onclick="logout()"
+                class="bg-white border border-gray-300 px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-50 hidden sm:block"
+              >
+                <i class="fas fa-sign-out-alt mr-1"></i> Logout
+              </button>
             </div>
           </div>
         </div>
-
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Order Date
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Customer Details
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Items
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Total
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody
-              id="ordersTableBody"
-              class="bg-white divide-y divide-gray-200"
-            >
-              <!-- Orders will be inserted here -->
-            </tbody>
-          </table>
+      </header>
+      <!-- Dashboard Stats -->
+      <div class="mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="bg-white rounded-lg shadow p-6 animate-fade-in" style="animation-delay: 0.1s">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 bg-blue-100 rounded-full p-3">
+                <i class="fas fa-shopping-cart text-blue-500 text-xl"></i>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-sm font-medium text-gray-500">Total Orders</h2>
+                <p id="totalOrdersCount" class="text-2xl font-semibold text-gray-800">--</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white rounded-lg shadow p-6 animate-fade-in" style="animation-delay: 0.2s">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 bg-green-100 rounded-full p-3">
+                <i class="fas fa-rupee-sign text-green-500 text-xl"></i>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-sm font-medium text-gray-500">Total Revenue</h2>
+                <p id="totalRevenue" class="text-2xl font-semibold text-gray-800">--</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white rounded-lg shadow p-6 animate-fade-in" style="animation-delay: 0.3s">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 bg-yellow-100 rounded-full p-3">
+                <i class="fas fa-clock text-yellow-500 text-xl"></i>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-sm font-medium text-gray-500">Recent Orders</h2>
+                <p id="recentOrdersCount" class="text-2xl font-semibold text-gray-800">--</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white rounded-lg shadow p-6 animate-fade-in" style="animation-delay: 0.4s">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 bg-purple-100 rounded-full p-3">
+                <i class="fas fa-users text-purple-500 text-xl"></i>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-sm font-medium text-gray-500">Total Customers</h2>
+                <p id="totalCustomers" class="text-2xl font-semibold text-gray-800">--</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Orders Table -->
+        <div class="bg-white rounded-lg shadow overflow-hidden animate-fade-in" style="animation-delay: 0.5s">
+          <div class="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between">
+            <h2 class="text-lg font-semibold text-gray-800 mb-2 sm:mb-0">Recent Orders</h2>
+            <div class="flex space-x-4">
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                  <i class="fas fa-search"></i>
+                </span>
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Search orders..."
+                  class="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-food-yellow focus:border-food-yellow"
+                />
+              </div>
+              <button id="refreshBtn" class="bg-food-yellow text-white px-4 py-2 rounded-lg hover:bg-yellow-500 transition btn-hover flex items-center">
+                <i class="fas fa-sync-alt mr-2"></i> Refresh
+              </button>
+            </div>
+          </div>
+          <div class="table-container">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Order Date
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Customer Details
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Items
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Total
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody" class="bg-white divide-y divide-gray-200">
+                <!-- Orders will be inserted here -->
+                <tr class="animate-pulse">
+                  <td colspan="6" class="px-6 py-4">
+                    <div class="flex items-center justify-center">
+                      <svg class="animate-spin h-5 w-5 text-food-yellow mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Loading orders...</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div id="mobileOrderList" class="hidden sm:block"></div>
+        <div class="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between">
+          <div class="text-sm text-gray-700 mb-2 sm:mb-0">
+            Showing <span id="orderCount">0</span> orders
+          </div>
         </div>
       </div>
-    </main>
-
+    </div>
     <!-- Delete Confirmation Modal -->
     <div
       id="deleteModal"
-      class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center"
+      class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
     >
-      <div class="bg-white p-6 rounded-lg shadow-xl">
-        <h3 class="text-lg font-semibold mb-4">Confirm Delete</h3>
-        <p class="mb-6">Are you sure you want to delete this order?</p>
+      <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4 animate-fade-in">
+        <div class="text-center mb-6">
+          <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-red-100 mb-4">
+            <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Confirm Delete</h3>
+          <p class="text-gray-600">Are you sure you want to delete this order? This action cannot be undone.</p>
+        </div>
         <div class="flex justify-end space-x-4">
           <button
             onclick="closeDeleteModal()"
-            class="px-4 py-2 border rounded-md hover:bg-gray-50"
+            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
           >
             Cancel
           </button>
           <button
             id="confirmDeleteBtn"
-            class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center"
           >
-            Delete
+            <i class="fas fa-trash-alt mr-2"></i> Delete
           </button>
         </div>
       </div>
     </div>
-
+    <!-- Order Details Modal -->
+    <div id="orderDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display:none;">
+      <div class="modal-content animate-fade-in p-6 shadow-xl">
+        <div class="flex justify-between items-center mb-4 border-b pb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Order Details</h3>
+          <button onclick="closeOrderDetailsModal()" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div id="orderDetailsContent" class="space-y-4">
+          <!-- Order details will be dynamically added here -->
+        </div>
+        <div class="mt-6 pt-4 border-t flex justify-end">
+          <button onclick="closeOrderDetailsModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Success Notification -->
+    <div id="notificationToast" class="hidden fixed bottom-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center">
+      <i class="fas fa-check-circle mr-2"></i>
+      <span id="notificationMessage"></span>
+    </div>
     <script>
       // Check authentication
       if (!localStorage.getItem("adminLoggedIn")) {
         window.location.href = "/admin";
       }
-
+      // Mobile sidebar toggle
+      document.getElementById("openSidebarBtn").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.add("open");
+      });
+      document.getElementById("closeSidebarBtn").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.remove("open");
+      });
+      // Show notification
+      function showNotification(message) {
+        const toast = document.getElementById("notificationToast");
+        document.getElementById("notificationMessage").textContent = message;
+        toast.classList.remove("hidden");
+        setTimeout(() => {
+          toast.classList.add("hidden");
+        }, 3000);
+      }
       let orders = [];
       let orderIdToDelete = null;
-
+      let uniqueCustomers = new Set();
+      // Calculate dashboard stats
+      function calculateStats(orders) {
+        // Total orders count
+        document.getElementById("totalOrdersCount").textContent = orders.length;
+        // Total revenue
+        const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+        document.getElementById("totalRevenue").textContent = `₹${totalRevenue}`;
+        // Recent orders (last 24 hours)
+        const oneDayAgo = new Date();
+        oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+        const recentOrders = orders.filter(order => new Date(order.createdAt) > oneDayAgo);
+        document.getElementById("recentOrdersCount").textContent = recentOrders.length;
+        // Total customers
+        orders.forEach(order => uniqueCustomers.add(order.phone));
+        document.getElementById("totalCustomers").textContent = uniqueCustomers.size;
+      }
       // Fetch and display orders
       async function fetchOrders() {
         try {
+          document.getElementById("refreshBtn").disabled = true;
+          document.getElementById("refreshBtn").innerHTML = `
+            <svg class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Refreshing...
+          `;
           const response = await fetch("/api/orders");
           orders = await response.json();
+          calculateStats(orders);
           displayOrders(orders);
+          document.getElementById("refreshBtn").disabled = false;
+          document.getElementById("refreshBtn").innerHTML = `<i class="fas fa-sync-alt mr-2"></i> Refresh`;
+          document.getElementById("orderCount").textContent = orders.length;
+          // Hide loading overlay
+          document.getElementById("loadingOverlay").style.display = "none";
         } catch (error) {
           console.error("Error fetching orders:", error);
-          alert("Failed to load orders");
+          showNotification("Failed to load orders");
+          document.getElementById("refreshBtn").disabled = false;
+          document.getElementById("refreshBtn").innerHTML = `<i class="fas fa-sync-alt mr-2"></i> Refresh`;
+          document.getElementById("loadingOverlay").style.display = "none";
         }
       }
-
       function displayOrders(orders) {
         const tbody = document.getElementById("ordersTableBody");
+        const mobileOrderList = document.getElementById("mobileOrderList");
         tbody.innerHTML = "";
-
-        orders.forEach((order) => {
+        mobileOrderList.innerHTML = "";
+        if (orders.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="px-6 py-10 text-center">
+                <div class="flex flex-col items-center">
+                  <i class="fas fa-inbox text-gray-300 text-5xl mb-4"></i>
+                  <p class="text-gray-500">No orders found</p>
+                </div>
+              </td>
+            </tr>
+          `;
+          mobileOrderList.innerHTML = `
+            <div class="text-center py-8">
+              <i class="fas fa-inbox text-gray-300 text-5xl mb-4"></i>
+              <p class="text-gray-500">No orders found</p>
+            </div>
+          `;
+          return;
+        }
+        orders.forEach((order, index) => {
           const tr = document.createElement("tr");
           const date = new Date(order.createdAt).toLocaleString();
-
+          // Add animation delay based on index
+          tr.classList.add("animate-fade-in");
+          tr.style.animationDelay = `${0.05 * (index + 1)}s`;
           tr.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        ${date}
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="text-sm font-medium text-gray-900">${
-                          order.name
-                        }</div>
-                        <div class="text-sm text-gray-500">${order.phone}</div>
-                        <div class="text-sm text-gray-500">${order.address}, ${
-            order.city
-          }, ${order.pincode}</div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="text-sm text-gray-900">
-                            ${order.cartItems
-                              .map(
-                                (item) =>
-                                  `${item.name} ${
-                                    item.weight ? `(${item.weight})` : ""
-                                  } x${item.qty}`
-                              )
-                              .join("<br>")}
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        ₹${order.total}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button onclick="showDeleteModal('${
-                          order._id
-                        }')" class="text-red-600 hover:text-red-900">
-                            Delete
-                        </button>
-                    </td>
-                `;
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 display-none-mobile">
+              ${date}
+            </td>
+            <td class="px-6 py-4">
+              <div class="text-sm font-medium text-gray-900">${order.name}</div>
+              <div class="text-sm text-gray-500">${order.phone}</div>
+              <div class="text-sm text-gray-500 truncate-mobile" title="${order.address}, ${order.city}, ${order.pincode}">
+                ${order.address}, ${order.city}, ${order.pincode}
+              </div>
+              <div class="text-xs text-gray-400 block md:hidden">${date}</div>
+            </td>
+            <td class="px-3 py-2 mobile-text-sm md:px-6 md:py-4">
+              <div class="text-sm text-gray-900">
+                ${order.cartItems.slice(0, 2).map((item) =>
+                  `<div class="mb-1 truncate-mobile">
+                    ${item.name} ${item.weight ? `(${item.weight})` : ""} x${item.qty}
+                  </div>`
+                ).join("")}
+                ${order.cartItems.length > 2 ? 
+                  `<div class="text-xs text-blue-500">+${order.cartItems.length - 2} more items</div>` : ''}
+              </div>
+            </td>
+            <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap mobile-text-sm">
+              <span class="font-semibold text-gray-800">₹${order.total}</span>
+            </td>
+            <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap display-none-mobile">
+              <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                ${order.paymentStatus || 'Pending'}
+              </span>
+            </td>
+            <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-right text-sm font-medium">
+              <button onclick="viewOrderDetails('${order._id}')" class="text-blue-600 hover:text-blue-900 mr-3 tap-highlight">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button onclick="showDeleteModal('${order._id}')" class="text-red-600 hover:text-red-900 tap-highlight">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </td>
+          `;
           tbody.appendChild(tr);
         });
       }
-
+      // Helper function for status colors
+      function getStatusColor(status) {
+        switch(status.toLowerCase()) {
+          case 'paid':
+            return 'bg-green-100 text-green-800';
+          case 'failed':
+            return 'bg-red-100 text-red-800';
+          case 'pending':
+          default:
+            return 'bg-yellow-100 text-yellow-800';
+        }
+      }
+      // Detect if user is on mobile
+      function isMobileDevice() {
+        return (window.innerWidth <= 640) || 
+               (navigator.maxTouchPoints > 0 && 
+                /Android|iPhone|iPad|iPod/.test(navigator.userAgent));
+      }
+      // Optimize modal display for mobile
+      function viewOrderDetails(orderId) {
+        const order = orders.find(o => o._id === orderId);
+        if (!order) return;
+        const orderDetailsContent = document.getElementById("orderDetailsContent");
+        const orderDetailsModal = document.getElementById("orderDetailsModal");
+        const orderDate = new Date(order.createdAt).toLocaleString();
+        let modalClass = isMobileDevice() ? 
+            'fixed inset-x-0 bottom-0 transform translate-y-0 rounded-t-xl ios-bottom-padding' : 
+            'modal-content animate-fade-in';
+        // Update modal container class
+        document.querySelector("#orderDetailsModal > div").className = modalClass;
+        // Build HTML content (with mobile optimization)
+        let orderDetailsHTML = `
+          <div class="bg-gray-50 p-3 sm:p-4 rounded-lg mb-3 sm:mb-4">
+            <div class="flex justify-between items-center">
+              <h4 class="font-semibold">Order Information</h4>
+              <span class="text-sm text-gray-500">${orderDate}</span>
+            </div>
+            <div class="text-sm mt-2">
+              <p>Order ID: <span class="font-medium">${order._id}</span></p>
+              <p>Status: <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 mt-1">${order.paymentStatus || 'Pending'}</span></p>
+            </div>
+          </div>
+          <div class="mb-4">
+            <h4 class="font-semibold mb-2">Customer Information</h4>
+            <div class="text-sm">
+              <p><span class="text-gray-600">Name:</span> ${order.name}</p>
+              <p><span class="text-gray-600">Phone:</span> ${order.phone}</p>
+              <p><span class="text-gray-600">Address:</span> ${order.address}</p>
+              <p><span class="text-gray-600">City:</span> ${order.city}, ${order.pincode}</p>
+            </div>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-2">Order Items</h4>
+            <div class="space-y-2 max-h-40 overflow-y-auto">
+              ${order.cartItems.map(item => `
+                <div class="order-detail-item">
+                  <div>
+                    <p class="font-medium">${item.name} ${item.weight ? `(${item.weight})` : ""}</p>
+                    <p class="text-sm text-gray-500">Qty: ${item.qty}</p>
+                  </div>
+                  <div class="font-medium">₹${item.price}</div>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+          <div class="border-t mt-4 pt-4">
+            <div class="flex justify-between items-center font-bold">
+              <span>Order Total:</span>
+              <span>₹${order.total}</span>
+            </div>
+          </div>
+        `;
+        // Set modal content
+        orderDetailsContent.innerHTML = orderDetailsHTML;
+        // Show modal
+        document.getElementById("orderDetailsModal").style.display = "flex";
+      }
+      // Close order details modal
+      function closeOrderDetailsModal() {
+        document.getElementById("orderDetailsModal").style.display = "none";
+      }
       // Search functionality
       document.getElementById("searchInput").addEventListener("input", (e) => {
         const searchTerm = e.target.value.toLowerCase();
         const filteredOrders = orders.filter(
           (order) =>
-            order.name.toLowerCase().includes(searchTerm) ||
-            order.phone.includes(searchTerm) ||
-            order.address.toLowerCase().includes(searchTerm) ||
-            order.city.toLowerCase().includes(searchTerm) ||
-            order.pincode.includes(searchTerm)
+            order.name?.toLowerCase().includes(searchTerm) ||
+            order.phone?.toString().includes(searchTerm) ||
+            order.address?.toLowerCase().includes(searchTerm) ||
+            order.city?.toLowerCase().includes(searchTerm) ||
+            order.pincode?.toString().includes(searchTerm)
         );
         displayOrders(filteredOrders);
+        document.getElementById("orderCount").textContent = filteredOrders.length;
       });
-
+      // Refresh button
+      document.getElementById("refreshBtn").addEventListener("click", fetchOrders);
       // Delete order functionality
       function showDeleteModal(orderId) {
         orderIdToDelete = orderId;
         document.getElementById("deleteModal").classList.remove("hidden");
       }
-
       function closeDeleteModal() {
         orderIdToDelete = null;
         document.getElementById("deleteModal").classList.add("hidden");
       }
-
       document
         .getElementById("confirmDeleteBtn")
         .addEventListener("click", async () => {
           if (!orderIdToDelete) return;
-
+          const deleteBtn = document.getElementById("confirmDeleteBtn");
+          deleteBtn.disabled = true;
+          deleteBtn.innerHTML = `
+            <svg class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Deleting...
+          `;
           try {
             const response = await fetch(`/api/orders/${orderIdToDelete}`, {
               method: "DELETE",
             });
-
             if (response.ok) {
               await fetchOrders();
               closeDeleteModal();
+              showNotification("Order deleted successfully");
             } else {
               throw new Error("Failed to delete order");
             }
           } catch (error) {
             console.error("Error:", error);
-            alert("Failed to delete order");
+            showNotification("Failed to delete order");
+          } finally {
+            deleteBtn.disabled = false;
+            deleteBtn.innerHTML = '<i class="fas fa-trash-alt mr-2"></i> Delete';
           }
         });
-
       function logout() {
         localStorage.removeItem("adminLoggedIn");
         window.location.href = "/admin";
       }
-
+      // Add touchstart handling for better mobile responsiveness
+      document.addEventListener('touchstart', function() {}, {passive: true});
+      // Close modals when clicking outside
+      window.addEventListener('click', function(event) {
+        const deleteModal = document.getElementById('deleteModal');
+        const orderDetailsModal = document.getElementById('orderDetailsModal');
+        if (event.target === deleteModal) {
+          closeDeleteModal();
+        }
+        if (event.target === orderDetailsModal) {
+          closeOrderDetailsModal();
+        }
+      });
       // Initial load
       fetchOrders();
     </script>
