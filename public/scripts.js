@@ -28,15 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // Check if we're on mobile
   const isMobile = window.innerWidth <= 480;
 
-  // If on mobile, adjust the menu grid
+  // If on mobile, center active category button
   if (isMobile) {
-    const menuGrid = document.getElementById("menu-items");
-    if (menuGrid) {
-      menuGrid.classList.remove("grid-cols-2");
-      menuGrid.classList.add("grid-cols-1");
-    }
-
-    // Center active category button in scroll view on mobile
     const activeButton = document.querySelector(".menu-category-btn.active");
     if (activeButton) {
       setTimeout(() => {
@@ -271,16 +264,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       // Add haptic feedback for mobile devices if available
-      if ('vibrate' in navigator) {
+      if ('vibrate' in navigator && isMobile) { // Only vibrate on mobile
         navigator.vibrate(40);
-      }
-      
-      // Visual feedback on mobile
-      if (isMobile) {
-        button.classList.add('bg-yellow-400');
-        setTimeout(() => {
-          button.classList.remove('bg-yellow-400');
-        }, 200);
       }
 
       updateCart(menuItem, newQuantity);
@@ -447,10 +432,10 @@ document.addEventListener("DOMContentLoaded", function () {
           if (name === "Small Size Oliga" && quantity === 0) {
             const controlsContainer = document.createElement("div");
             controlsContainer.id = "smallOligaControls";
-            controlsContainer.className = "quantity-control";
+            controlsContainer.className = "quantity-control mt-2"; 
             controlsContainer.innerHTML = `
               <button
-                class="bg-food-yellow text-white px-4 py-2 rounded-full font-medium hover:bg-yellow-500 transition"
+                class="bg-food-yellow text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-sm md:text-base lg:hover:bg-yellow-500 transition active:bg-yellow-600"
                 onclick="addSmallOligaToCart(this)"
               >
                 Add 50 to Cart
@@ -588,11 +573,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Initial state: Delete button because quantity is 50
       controlsContainer.innerHTML = `
-        <button class="quantity-btn bg-red-500 text-white hover:bg-red-600" onclick="deleteSmallOliga(this)">
+        <button class="quantity-btn bg-red-500 text-white lg:hover:bg-red-600 active:bg-red-700 active:scale-95" onclick="deleteSmallOliga(this)">
           <i class="fas fa-trash"></i>
         </button>
         <span class="quantity-display">${initialQuantity}</span>
-        <button class="quantity-btn bg-food-yellow text-white hover:bg-yellow-500" onclick="changeQuantity(this, 1, true)">
+        <button class="quantity-btn bg-food-yellow text-white lg:hover:bg-yellow-500 active:bg-yellow-600 active:scale-95" onclick="changeQuantity(this, 1, true)">
           +
         </button>
       `;
@@ -629,7 +614,7 @@ document.addEventListener("DOMContentLoaded", function () {
       addButtonContainer.className = "quantity-control mt-2"; // Keep original margin if needed
       addButtonContainer.innerHTML = `
         <button
-          class="bg-food-yellow text-white px-4 py-2 rounded-lg font-medium hover:bg-yellow-500 transition btn-hover"
+          class="bg-food-yellow text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-sm md:text-base lg:hover:bg-yellow-500 transition active:bg-yellow-600"
           onclick="addSmallOligaToCart(this)"
         >
           Add 50 to Cart
@@ -647,6 +632,31 @@ document.addEventListener("DOMContentLoaded", function () {
       updateCartQuantityBadge(); // Ensure badge is updated
     } catch (error) {
       console.error("Error deleting Small Size Oliga from menu:", error);
+    }
+  }
+
+  // Mobile menu functionality
+  function openMobileMenu() {
+    document.getElementById('mobileMenu').classList.add('open');
+    document.getElementById('mobileMenuOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // Change icon to 'X'
+    const menuBtnIcon = document.querySelector('#mobileMenuBtn i');
+    if (menuBtnIcon) {
+      menuBtnIcon.classList.remove('fa-bars');
+      menuBtnIcon.classList.add('fa-times');
+    }
+  }
+
+  function closeMobileMenu() {
+    document.getElementById('mobileMenu').classList.remove('open');
+    document.getElementById('mobileMenuOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    // Change icon back to 'bars'
+    const menuBtnIcon = document.querySelector('#mobileMenuBtn i');
+    if (menuBtnIcon) {
+      menuBtnIcon.classList.remove('fa-times');
+      menuBtnIcon.classList.add('fa-bars');
     }
   }
 
@@ -668,4 +678,6 @@ document.addEventListener("DOMContentLoaded", function () {
   window.addSmallOligaToCart = addSmallOligaToCart;
   window.deleteCartItem = deleteCartItem;
   window.deleteSmallOliga = deleteSmallOliga;
+  window.openMobileMenu = openMobileMenu;
+  window.closeMobileMenu = closeMobileMenu;
 });

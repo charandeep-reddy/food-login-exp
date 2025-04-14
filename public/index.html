@@ -87,11 +87,6 @@
         transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
 
-      .quantity-btn:hover {
-        transform: scale(1.1);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      }
-
       .quantity-display {
         margin: 0 10px;
         font-weight: bold;
@@ -124,11 +119,6 @@
       .menu-item {
         transition: all 0.3s ease;
       }
-      
-      .menu-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-      }
 
       /* Enhanced View Cart button */
       .view-cart-btn {
@@ -139,10 +129,6 @@
         font-weight: bold;
         transition: all 0.3s ease;
         min-height: 44px;
-      }
-
-      .view-cart-btn:hover {
-        background-color: #ffc107;
       }
 
       /* Trending tag styles */
@@ -172,7 +158,7 @@
           box-shadow: 0 0 5px rgba(255, 255, 255, 0.3), 0 0 10px currentColor;
         }
       }
-      
+
       /* Improved cart modal design */
       #cartModal {
         animation: fadeIn 0.3s ease-in-out;
@@ -208,7 +194,7 @@
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         border: 2px solid #FFD700;
       }
-      
+
       .pickle-quantity {
         border: 2px solid #ffd700;
         border-radius: 8px;
@@ -217,11 +203,6 @@
         color: #333;
         background-color: #fff;
         transition: all 0.3s ease;
-      }
-
-      .pickle-quantity:hover {
-        border-color: #f9b208;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       }
 
       .pickle-quantity:focus {
@@ -236,21 +217,17 @@
         background-color: white;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
-      
+
       .navbar.scrolled {
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
       }
-      
+
       .navbar-link {
         position: relative;
         transition: all 0.3s ease;
         color: #4a5568;
       }
-      
-      .navbar-link:hover {
-         color: #FFD700;
-      }
-      
+
       .navbar-link::after {
         content: '';
         position: absolute;
@@ -261,15 +238,11 @@
         bottom: -4px;
         transition: width 0.3s ease;
       }
-      
-      .navbar-link:hover::after {
-        width: 100%;
-      }
-      
+
       .navbar-link.active::after {
         width: 100%;
       }
-      
+
       /* Mobile menu */
       .mobile-menu {
         position: fixed;
@@ -286,11 +259,11 @@
         box-shadow: -2px 0 8px rgba(0,0,0,0.15);
         overflow-y: auto;
       }
-      
+
       .mobile-menu.open {
         transform: translateX(0);
       }
-      
+
       .mobile-menu-overlay {
         position: fixed;
         top: 0;
@@ -303,19 +276,12 @@
         visibility: hidden;
         transition: all 0.3s ease-in-out;
       }
-      
+
       .mobile-menu-overlay.open {
         opacity: 1;
         visibility: visible;
       }
 
-      /* Button hover effect consistent with admin */
-      .btn-hover:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-        transition: all 0.3s ease;
-      }
-      
       /* Social media icons in footer */
       .social-icon {
         transition: transform 0.3s ease;
@@ -330,11 +296,6 @@
         background-color: rgba(255, 255, 255, 0.2);
       }
 
-      .social-icon:hover {
-        transform: translateY(-3px);
-        background-color: rgba(255, 255, 255, 0.3);
-      }
-      
       /* Ensure no-scrollbar utility works */
       .no-scrollbar::-webkit-scrollbar {
           display: none;
@@ -357,30 +318,30 @@
           scroll-snap-type: x mandatory;
           scrollbar-width: none;
         }
-        
+
         .menu-item {
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
           border-radius: 12px;
         }
-        
+
         .menu-item img {
           border-radius: 12px 12px 0 0;
         }
-        
+
         .quantity-btn {
           width: 36px;
           height: 36px;
           min-width: 36px;
           min-height: 36px;
         }
-        
+
         .pickle-quantity {
           width: 100%;
           margin-bottom: 0.5rem;
           min-height: 44px;
         }
       }
-      
+
       /* Enhanced mobile menu grid */
       @media (max-width: 480px) {
         .mobile-menu-grid {
@@ -388,7 +349,7 @@
           grid-template-columns: 1fr;
           gap: 1rem;
         }
-        
+
         .menu-item:hover {
           transform: none;
         }
@@ -405,10 +366,10 @@
         <p class="text-gray-700 text-lg">Loading menu...</p>
       </div>
     </div>
-    
+
     <!-- Mobile Menu Overlay -->
     <div id="mobileMenuOverlay" class="mobile-menu-overlay" onclick="closeMobileMenu()"></div>
-    
+
     <!-- Mobile Menu -->
     <div id="mobileMenu" class="mobile-menu">
       <div class="flex justify-between items-center mb-6 border-b pb-4">
@@ -416,52 +377,52 @@
           <img src="images/food-login.webp" alt="Food Login Logo" class="h-10 w-10 rounded-full border-2 border-food-yellow" />
           <h2 class="text-xl font-bold text-gray-800 tracking-wide ml-3">Food Login</h2>
         </div>
-        <button onclick="closeMobileMenu()" class="text-gray-500 hover:text-gray-700">
+        <button onclick="closeMobileMenu()" class="text-gray-500 lg:hover:text-gray-700 active:bg-gray-100 rounded-full p-2">
           <i class="fas fa-times text-xl"></i>
         </button>
       </div>
       <nav>
         <ul class="space-y-4">
           <li>
-            <a href="#home" onclick="closeMobileMenu()" class="block px-4 py-2 text-lg font-medium text-gray-700 hover:bg-food-yellow/10 hover:text-food-yellow rounded-lg">
+            <a href="#home" onclick="closeMobileMenu()" class="block px-4 py-2 text-lg font-medium text-gray-700 lg:hover:bg-food-yellow/10 lg:hover:text-food-yellow rounded-lg active:bg-food-yellow/10">
               <i class="fas fa-home w-8"></i> Home
             </a>
           </li>
           <li>
-            <a href="#about" onclick="closeMobileMenu()" class="block px-4 py-2 text-lg font-medium text-gray-700 hover:bg-food-yellow/10 hover:text-food-yellow rounded-lg">
+            <a href="#about" onclick="closeMobileMenu()" class="block px-4 py-2 text-lg font-medium text-gray-700 lg:hover:bg-food-yellow/10 lg:hover:text-food-yellow rounded-lg active:bg-food-yellow/10">
               <i class="fas fa-info-circle w-8"></i> About
             </a>
           </li>
           <li>
-            <a href="#menu" onclick="closeMobileMenu()" class="block px-4 py-2 text-lg font-medium text-gray-700 hover:bg-food-yellow/10 hover:text-food-yellow rounded-lg">
+            <a href="#menu" onclick="closeMobileMenu()" class="block px-4 py-2 text-lg font-medium text-gray-700 lg:hover:bg-food-yellow/10 lg:hover:text-food-yellow rounded-lg active:bg-food-yellow/10">
               <i class="fas fa-utensils w-8"></i> Menu
             </a>
           </li>
           <li>
-            <a href="#contact" onclick="closeMobileMenu()" class="block px-4 py-2 text-lg font-medium text-gray-700 hover:bg-food-yellow/10 hover:text-food-yellow rounded-lg">
+            <a href="#contact" onclick="closeMobileMenu()" class="block px-4 py-2 text-lg font-medium text-gray-700 lg:hover:bg-food-yellow/10 lg:hover:text-food-yellow rounded-lg active:bg-food-yellow/10">
               <i class="fas fa-phone w-8"></i> Contact
             </a>
           </li>
         </ul>
       </nav>
       <div class="mt-8 pt-6 border-t">
-        <button onclick="toggleCartModal(); closeMobileMenu();" class="w-full bg-food-yellow text-white py-3 rounded-lg font-semibold hover:bg-yellow-500 transition flex items-center justify-center btn-hover">
+        <button onclick="toggleCartModal(); closeMobileMenu();" class="w-full bg-food-yellow text-white py-3 rounded-lg font-semibold lg:hover:bg-yellow-500 transition flex items-center justify-center active:bg-yellow-600">
           <i class="fas fa-shopping-cart mr-2"></i> View Cart
         </button>
       </div>
       <div class="mt-6 flex justify-center space-x-4">
-        <a href="https://www.instagram.com/foodlogin_8" target="_blank" class="text-gray-600 hover:text-food-yellow text-xl">
+        <a href="https://www.instagram.com/foodlogin_8" target="_blank" class="text-gray-600 lg:hover:text-food-yellow text-xl active:text-food-yellow/80">
           <i class="fab fa-instagram"></i>
         </a>
-        <a href="https://www.youtube.com/@foodlogin_8" target="_blank" class="text-gray-600 hover:text-food-yellow text-xl">
+        <a href="https://www.youtube.com/@foodlogin_8" target="_blank" class="text-gray-600 lg:hover:text-food-yellow text-xl active:text-food-yellow/80">
           <i class="fab fa-youtube"></i>
         </a>
-        <a href="https://wa.me/916301972788" target="_blank" class="text-gray-600 hover:text-food-yellow text-xl">
+        <a href="https://wa.me/916301972788" target="_blank" class="text-gray-600 lg:hover:text-food-yellow text-xl active:text-food-yellow/80">
           <i class="fab fa-whatsapp"></i>
         </a>
       </div>
     </div>
-    
+
     <div id="mainContent" class="blur-content">
       <!-- Improved Navbar -->
       <header class="bg-white shadow-sm sticky top-0 z-50 navbar">
@@ -506,7 +467,7 @@
               <!-- View Cart Button -->
               <button
                 onclick="toggleCartModal()"
-                class="relative bg-food-yellow text-white px-3 sm:px-4 py-2 rounded-lg font-medium hover:bg-yellow-500 transition tracking-wide text-sm shadow-sm flex items-center btn-hover"
+                class="relative bg-food-yellow text-white px-3 sm:px-4 py-2 rounded-lg font-medium lg:hover:bg-yellow-500 transition tracking-wide text-sm shadow-sm flex items-center active:bg-yellow-600"
               >
                 <i class="fas fa-shopping-cart sm:mr-2"></i>
                 <span class="hidden sm:inline">View Cart</span>
@@ -517,10 +478,10 @@
                   0
                 </span>
               </button>
-              
+
               <!-- Mobile menu button -->
-              <button id="mobileMenuBtn" class="lg:hidden text-gray-600 hover:text-food-yellow" onclick="openMobileMenu()">
-                <i class="fas fa-bars text-2xl"></i>
+              <button id="mobileMenuBtn" class="lg:hidden text-gray-600 lg:hover:text-food-yellow active:bg-gray-100 rounded-full p-2" onclick="openMobileMenu()">
+                <i class="fas fa-bars text-2xl transition-transform duration-300 ease-in-out"></i>
               </button>
             </div>
           </div>
@@ -549,13 +510,13 @@
           >
             <a
               href="#menu"
-              class="bg-food-yellow text-white px-6 py-3 rounded-lg font-medium hover:bg-yellow-500 transition text-center tracking-wide btn-hover"
+              class="bg-food-yellow text-white px-6 py-3 rounded-lg font-medium lg:hover:bg-yellow-500 transition text-center tracking-wide active:bg-yellow-600"
             >
               <i class="fas fa-utensils mr-2"></i>View Our Menu
             </a>
             <a
               href="#contact"
-              class="border border-food-yellow text-food-yellow px-6 py-3 rounded-lg font-medium hover:bg-food-yellow/10 transition text-center tracking-wide btn-hover min-h-[44px]"
+              class="border border-food-yellow text-food-yellow px-6 py-3 rounded-lg font-medium lg:hover:bg-food-yellow/10 transition text-center tracking-wide active:bg-food-yellow/20 min-h-[44px]"
             >
               Contact Us
             </a>
@@ -662,11 +623,11 @@
             <!-- Menu Items Grid -->
             <div
               id="menu-items"
-              class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-8 max-w-6xl mx-auto mobile-menu-grid"
+              class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-8 max-w-6xl mx-auto"
             >
               <!-- Oliga Section -->
               <div
-                class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 w-full relative"
+                class="menu-item flex flex-col bg-white rounded-lg overflow-hidden shadow-md lg:hover:shadow-lg transition transform lg:hover:-translate-y-1 duration-200 w-full relative"
                 data-category="oliga"
                 data-id="oliga-normal"
               >
@@ -676,26 +637,28 @@
                 <img
                   src="images/oliga.webp"
                   alt="Chenikkaya Normal Oliga"
-                  class="w-full h-24 sm:h-28 md:h-40 object-cover"
+                  class="w-full h-28 md:h-40 object-cover"
                 />
-                <div class="p-2 md:p-4 text-center">
-                  <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
-                    Chenikkaya Oliga
-                  </h3>
-                  <span
-                    class="text-food-yellow font-bold text-[16px] md:text-base"
-                    >₹30</span
-                  >
-                  <div class="quantity-control">
+                <div class="p-2 md:p-4 text-center flex flex-col flex-grow">
+                  <div class="flex-grow min-h-[60px] md:min-h-[80px] flex flex-col justify-start items-center">
+                    <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                      Chenikkaya Oliga
+                    </h3>
+                    <span
+                      class="text-food-yellow font-bold text-[16px] md:text-base"
+                      >₹30</span
+                    >
+                  </div>
+                  <div class="quantity-control mt-auto">
                     <button
-                      class="quantity-btn"
+                      class="quantity-btn active:scale-95"
                       onclick="changeQuantity(this, -1)"
                     >
                       -
                     </button>
                     <span class="quantity-display">0</span>
                     <button
-                      class="quantity-btn"
+                      class="quantity-btn active:scale-95"
                       onclick="changeQuantity(this, 1)"
                     >
                       +
@@ -705,7 +668,7 @@
               </div>
 
               <div
-                class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+                class="menu-item flex flex-col bg-white rounded-lg overflow-hidden shadow-md lg:hover:shadow-lg transition transform lg:hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
                 data-category="oliga"
                 data-id="oliga-ghee"
               >
@@ -714,24 +677,26 @@
                   alt="Chenikkaya Ghee Oliga"
                   class="w-full h-28 md:h-40 object-cover"
                 />
-                <div class="p-2 md:p-4 text-center">
-                  <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
-                    Chenikkaya Ghee Oliga
-                  </h3>
-                  <span
-                    class="text-food-yellow font-bold text-[16px] md:text-base"
-                    >₹40</span
-                  >
-                  <div class="quantity-control">
+                <div class="p-2 md:p-4 text-center flex flex-col flex-grow">
+                  <div class="flex-grow min-h-[60px] md:min-h-[80px] flex flex-col justify-start items-center">
+                    <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                      Chenikkaya Ghee Oliga
+                    </h3>
+                    <span
+                      class="text-food-yellow font-bold text-[16px] md:text-base"
+                      >₹40</span
+                    >
+                  </div>
+                  <div class="quantity-control mt-auto">
                     <button
-                      class="quantity-btn"
+                      class="quantity-btn active:scale-95"
                       onclick="changeQuantity(this, -1)"
                     >
                       -
                     </button>
                     <span class="quantity-display">0</span>
                     <button
-                      class="quantity-btn"
+                      class="quantity-btn active:scale-95"
                       onclick="changeQuantity(this, 1)"
                     >
                       +
@@ -741,7 +706,7 @@
               </div>
 
               <div
-                class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+                class="menu-item flex flex-col bg-white rounded-lg overflow-hidden shadow-md lg:hover:shadow-lg transition transform lg:hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
                 data-category="oliga"
                 data-id="oliga-small"
               >
@@ -750,17 +715,19 @@
                   alt="Small Size Oliga"
                   class="w-full h-28 md:h-40 object-cover"
                 />
-                <div class="p-2 md:p-4 text-center">
-                  <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
-                    Small Size Oliga
-                  </h3>
-                  <span
-                    class="text-food-yellow font-bold text-[16px] md:text-base"
-                    >Each ₹10</span
-                  >
-                  <div class="quantity-control mt-2" id="smallOligaControls">
+                <div class="p-2 md:p-4 text-center flex flex-col flex-grow">
+                  <div class="flex-grow min-h-[60px] md:min-h-[80px] flex flex-col justify-start items-center">
+                    <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                      Small Size Oliga
+                    </h3>
+                    <span
+                      class="text-food-yellow font-bold text-[16px] md:text-base"
+                      >Each ₹10</span
+                    >
+                  </div>
+                  <div class="quantity-control mt-auto" id="smallOligaControls">
                     <button
-                      class="bg-food-yellow text-white px-4 py-2 rounded-lg font-medium hover:bg-yellow-500 transition btn-hover"
+                      class="bg-food-yellow text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-sm md:text-base lg:hover:bg-yellow-500 transition active:bg-yellow-600"
                       onclick="addSmallOligaToCart(this)"
                     >
                       Add 50 to Cart
@@ -770,7 +737,7 @@
               </div>
 
               <div
-                class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+                class="menu-item flex flex-col bg-white rounded-lg overflow-hidden shadow-md lg:hover:shadow-lg transition transform lg:hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
                 data-category="oliga"
                 data-id="special-mix-oliga-normal"
               >
@@ -779,24 +746,26 @@
                   alt="Food-Login Special Mix Oliga (Normal)"
                   class="w-full h-28 md:h-40 object-cover"
                 />
-                <div class="p-2 md:p-4 text-center">
-                  <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
-                    Food Login Special Mix Oliga
-                  </h3>
-                  <span
-                    class="text-food-yellow font-bold text-[16px] md:text-base"
-                    >₹50</span
-                  >
-                  <div class="quantity-control">
+                <div class="p-2 md:p-4 text-center flex flex-col flex-grow">
+                  <div class="flex-grow min-h-[60px] md:min-h-[80px] flex flex-col justify-start items-center">
+                    <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                      Food Login Special Mix Oliga
+                    </h3>
+                    <span
+                      class="text-food-yellow font-bold text-[16px] md:text-base"
+                      >₹50</span
+                    >
+                  </div>
+                  <div class="quantity-control mt-auto">
                     <button
-                      class="quantity-btn"
+                      class="quantity-btn active:scale-95"
                       onclick="changeQuantity(this, -1)"
                     >
                       -
                     </button>
                     <span class="quantity-display">0</span>
                     <button
-                      class="quantity-btn"
+                      class="quantity-btn active:scale-95"
                       onclick="changeQuantity(this, 1)"
                     >
                       +
@@ -806,7 +775,7 @@
               </div>
 
               <div
-                class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+                class="menu-item flex flex-col bg-white rounded-lg overflow-hidden shadow-md lg:hover:shadow-lg transition transform lg:hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
                 data-category="oliga"
                 data-id="special-mix-oliga-ghee"
               >
@@ -815,24 +784,26 @@
                   alt="Food-Login Special Mix Oliga (Ghee)"
                   class="w-full h-28 md:h-40 object-cover"
                 />
-                <div class="p-2 md:p-4 text-center">
-                  <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
-                    Food Login Special Mix Oliga (Ghee)
-                  </h3>
-                  <span
-                    class="text-food-yellow font-bold text-[16px] md:text-base"
-                    >₹60</span
-                  >
-                  <div class="quantity-control">
+                <div class="p-2 md:p-4 text-center flex flex-col flex-grow">
+                  <div class="flex-grow min-h-[60px] md:min-h-[80px] flex flex-col justify-start items-center">
+                    <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                      Food Login Special Mix Oliga (Ghee)
+                    </h3>
+                    <span
+                      class="text-food-yellow font-bold text-[16px] md:text-base"
+                      >₹60</span
+                    >
+                  </div>
+                  <div class="quantity-control mt-auto">
                     <button
-                      class="quantity-btn"
+                      class="quantity-btn active:scale-95"
                       onclick="changeQuantity(this, -1)"
                     >
                       -
                     </button>
                     <span class="quantity-display">0</span>
                     <button
-                      class="quantity-btn"
+                      class="quantity-btn active:scale-95"
                       onclick="changeQuantity(this, 1)"
                     >
                       +
@@ -843,7 +814,7 @@
 
               <!-- Non-Veg Pickle Section -->
               <div
-                class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full relative"
+                class="menu-item flex flex-col bg-white rounded-lg overflow-hidden shadow-md lg:hover:shadow-lg transition transform lg:hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full relative"
                 data-category="non-veg-pickle"
                 data-id="chicken-pickle"
               >
@@ -855,33 +826,35 @@
                   alt="Chicken Pickle"
                   class="w-full h-28 md:h-40 object-cover"
                 />
-                <div class="p-2 md:p-4 text-center">
-                  <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
-                    Chicken Pickle
-                  </h3>
-                  <!-- Dropdown for weight and price -->
-                  <div class="mb-2">
-                    <select
-                      class="pickle-quantity w-full md:w-auto"
-                      onchange="handleWeightChange(this)"
-                    >
-                      <option value="100g" data-price="140">100g - ₹140</option>
-                      <option value="250g" data-price="249">250g - ₹249</option>
-                      <option value="500g" data-price="499">500g - ₹499</option>
-                      <option value="1kg" data-price="999">1kg - ₹999</option>
-                    </select>
+                <div class="p-2 md:p-4 text-center flex flex-col flex-grow">
+                  <div class="flex-grow min-h-[60px] md:min-h-[80px] flex flex-col justify-start items-center">
+                    <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                      Chicken Pickle
+                    </h3>
+                    <!-- Dropdown for weight and price -->
+                    <div class="mb-2 w-full">
+                      <select
+                        class="pickle-quantity w-full md:w-auto"
+                        onchange="handleWeightChange(this)"
+                      >
+                        <option value="100g" data-price="140">100g - ₹140</option>
+                        <option value="250g" data-price="249">250g - ₹249</option>
+                        <option value="500g" data-price="499">500g - ₹499</option>
+                        <option value="1kg" data-price="999">1kg - ₹999</option>
+                      </select>
+                    </div>
                   </div>
                   <!-- Quantity control -->
-                  <div class="quantity-control">
+                  <div class="quantity-control mt-auto">
                     <button
-                      class="quantity-btn"
+                      class="quantity-btn active:scale-95"
                       onclick="changeQuantity(this, -1)"
                     >
                       -
                     </button>
                     <span class="quantity-display">0</span>
                     <button
-                      class="quantity-btn"
+                      class="quantity-btn active:scale-95"
                       onclick="changeQuantity(this, 1)"
                     >
                       +
@@ -891,7 +864,7 @@
               </div>
 
               <div
-                class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+                class="menu-item flex flex-col bg-white rounded-lg overflow-hidden shadow-md lg:hover:shadow-lg transition transform lg:hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
                 data-category="non-veg-pickle"
                 data-id="gongura-chicken-pickle"
               >
@@ -900,30 +873,32 @@
                   alt="Gongura Chicken Pickle"
                   class="w-full h-28 md:h-40 object-cover"
                 />
-                <div class="p-2 md:p-4 text-center">
-                  <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
-                    Gongura Chicken Pickle
-                  </h3>
-                  <div class="mb-2">
-                    <select
-                      class="pickle-quantity w-full md:w-auto"
-                      onchange="handleWeightChange(this)"
-                    >
-                      <option value="250g" data-price="299">250g - ₹299</option>
-                      <option value="500g" data-price="599">500g - ₹599</option>
-                      <option value="1kg" data-price="1199">1kg - ₹1199</option>
-                    </select>
+                <div class="p-2 md:p-4 text-center flex flex-col flex-grow">
+                  <div class="flex-grow min-h-[60px] md:min-h-[80px] flex flex-col justify-start items-center">
+                    <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                      Gongura Chicken Pickle
+                    </h3>
+                    <div class="mb-2 w-full">
+                      <select
+                        class="pickle-quantity w-full md:w-auto"
+                        onchange="handleWeightChange(this)"
+                      >
+                        <option value="250g" data-price="299">250g - ₹299</option>
+                        <option value="500g" data-price="599">500g - ₹599</option>
+                        <option value="1kg" data-price="1199">1kg - ₹1199</option>
+                      </select>
+                    </div>
                   </div>
-                  <div class="quantity-control">
+                  <div class="quantity-control mt-auto">
                     <button
-                      class="quantity-btn"
+                      class="quantity-btn active:scale-95"
                       onclick="changeQuantity(this, -1)"
                     >
                       -
                     </button>
                     <span class="quantity-display">0</span>
                     <button
-                      class="quantity-btn"
+                      class="quantity-btn active:scale-95"
                       onclick="changeQuantity(this, 1)"
                     >
                       +
@@ -933,7 +908,7 @@
               </div>
 
               <div
-                class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+                class="menu-item flex flex-col bg-white rounded-lg overflow-hidden shadow-md lg:hover:shadow-lg transition transform lg:hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
                 data-category="non-veg-pickle"
                 data-id="gongura-mutton-pickle"
               >
@@ -942,30 +917,32 @@
                   alt="Mutton Pickle"
                   class="w-full h-28 md:h-40 object-cover"
                 />
-                <div class="p-2 md:p-4 text-center">
-                  <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
-                    Mutton Pickle
-                  </h3>
-                  <div class="mb-2">
-                    <select
-                      class="pickle-quantity w-full md:w-auto"
-                      onchange="handleWeightChange(this)"
-                    >
-                      <option value="250g" data-price="449">250g - ₹449</option>
-                      <option value="500g" data-price="899">500g - ₹899</option>
-                      <option value="1kg" data-price="1799">1kg - ₹1799</option>
-                    </select>
+                <div class="p-2 md:p-4 text-center flex flex-col flex-grow">
+                  <div class="flex-grow min-h-[60px] md:min-h-[80px] flex flex-col justify-start items-center">
+                    <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                      Mutton Pickle
+                    </h3>
+                    <div class="mb-2 w-full">
+                      <select
+                        class="pickle-quantity w-full md:w-auto"
+                        onchange="handleWeightChange(this)"
+                      >
+                        <option value="250g" data-price="449">250g - ₹449</option>
+                        <option value="500g" data-price="899">500g - ₹899</option>
+                        <option value="1kg" data-price="1799">1kg - ₹1799</option>
+                      </select>
+                    </div>
                   </div>
-                  <div class="quantity-control">
+                  <div class="quantity-control mt-auto">
                     <button
-                      class="quantity-btn"
+                      class="quantity-btn active:scale-95"
                       onclick="changeQuantity(this, -1)"
                     >
                       -
                     </button>
                     <span class="quantity-display">0</span>
                     <button
-                      class="quantity-btn"
+                      class="quantity-btn active:scale-95"
                       onclick="changeQuantity(this, 1)"
                     >
                       +
@@ -979,7 +956,7 @@
             <div class="flex justify-center mt-6 md:mt-8">
               <button
                 onclick="toggleCartModal()"
-                class="view-cart-btn flex items-center justify-center space-x-2 bg-food-yellow text-white px-6 py-2 md:py-3 rounded-lg font-semibold hover:bg-yellow-500 transition btn-hover min-h-[44px]"
+                class="view-cart-btn flex items-center justify-center space-x-2 bg-food-yellow text-white px-6 py-2 md:py-3 rounded-lg font-semibold lg:hover:bg-yellow-500 transition active:bg-yellow-600 min-h-[44px]"
               >
                 <i class="fas fa-shopping-cart"></i>
                 <span>View Cart</span>
@@ -1013,7 +990,7 @@
             >
               <div class="flex items-center">
                 <i class="fas fa-phone text-food-yellow text-xl w-8"></i>
-                <a href="tel:+916301972788" class="hover:text-food-yellow"
+                <a href="tel:+916301972788" class="lg:hover:text-food-yellow active:text-food-yellow/80"
                   >+91 6301972788</a
                 >
               </div>
@@ -1022,7 +999,7 @@
                 <a
                   href="https://www.instagram.com/foodlogin_8"
                   target="_blank"
-                  class="hover:text-food-yellow"
+                  class="lg:hover:text-food-yellow active:text-food-yellow/80"
                   >@foodlogin_8</a
                 >
               </div>
@@ -1077,7 +1054,7 @@
       >
         <button
           onclick="toggleCartModal()"
-          class="absolute top-2 sm:top-4 right-2 sm:right-4 text-gray-500 hover:text-gray-800 cart-modal-close-btn p-2 rounded-full hover:bg-gray-100 min-h-[44px] min-w-[44px] flex items-center justify-center"
+          class="absolute top-2 sm:top-4 right-2 sm:right-4 text-gray-500 lg:hover:text-gray-800 cart-modal-close-btn p-2 rounded-full lg:hover:bg-gray-100 active:bg-gray-200 min-h-[44px] min-w-[44px] flex items-center justify-center"
         >
           <i class="fas fa-times text-xl"></i>
         </button>
@@ -1108,7 +1085,7 @@
           >
           <button
             onclick="placeOrder()"
-            class="bg-food-yellow text-white w-full sm:w-auto px-4 sm:px-6 py-2 rounded-lg font-medium hover:bg-yellow-500 transition btn-hover order-1 sm:order-2 min-h-[44px]"
+            class="bg-food-yellow text-white w-full sm:w-auto px-4 sm:px-6 py-2 rounded-lg font-medium lg:hover:bg-yellow-500 transition active:bg-yellow-600 order-1 sm:order-2 min-h-[44px]"
           >
             Proceed to Checkout
           </button>
@@ -1131,14 +1108,26 @@
         document.getElementById('mobileMenu').classList.add('open');
         document.getElementById('mobileMenuOverlay').classList.add('open');
         document.body.style.overflow = 'hidden';
+        // Change icon to 'X' and add rotation
+        const menuBtnIcon = document.querySelector('#mobileMenuBtn i');
+        if (menuBtnIcon) {
+          menuBtnIcon.classList.remove('fa-bars');
+          menuBtnIcon.classList.add('fa-times', 'rotate-90');
+        }
       }
-      
+
       function closeMobileMenu() {
         document.getElementById('mobileMenu').classList.remove('open');
         document.getElementById('mobileMenuOverlay').classList.remove('open');
         document.body.style.overflow = '';
+        // Change icon back to 'bars' and remove rotation
+        const menuBtnIcon = document.querySelector('#mobileMenuBtn i');
+        if (menuBtnIcon) {
+          menuBtnIcon.classList.remove('fa-times', 'rotate-90');
+          menuBtnIcon.classList.add('fa-bars');
+        }
       }
-      
+
       // Navbar scroll effect
       window.addEventListener('scroll', function() {
         const navbar = document.querySelector('.navbar');
@@ -1148,14 +1137,14 @@
           navbar.classList.remove('scrolled');
         }
       });
-      
+
       // Highlight active nav item based on scroll position
       window.addEventListener('scroll', function() {
         const sections = document.querySelectorAll('section');
         const navLinks = document.querySelectorAll('.navbar-link');
-        
+
         let current = '';
-        
+
         sections.forEach(section => {
           const sectionTop = section.offsetTop;
           const sectionHeight = section.clientHeight;
@@ -1163,7 +1152,7 @@
             current = section.getAttribute('id');
           }
         });
-        
+
         navLinks.forEach(link => {
           link.classList.remove('active');
           if(link.getAttribute('href') === `#${current}`) {

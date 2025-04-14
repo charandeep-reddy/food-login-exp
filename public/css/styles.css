@@ -22,11 +22,45 @@ h1, h2, h3 {
   animation: fadeIn 0.3s ease forwards;
 }
 
-/* Button hover effects */
-.btn-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
+/* Button hover effects - Apply only on devices supporting hover */
+@media (hover: hover) {
+  .btn-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .menu-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .quantity-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .pickle-quantity:hover {
+    border-color: #f9b208;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .social-icon:hover {
+    transform: translateY(-3px);
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .navbar-link:hover {
+     color: #FFD700;
+  }
+  
+  .navbar-link:hover::after {
+    width: 100%;
+  }
+  
+  .view-cart-btn:hover {
+    background-color: #ffc107;
+  }
 }
 
 /* Custom scrollbar */
@@ -69,6 +103,27 @@ h1, h2, h3 {
   .mobile-stack > *:last-child {
     margin-bottom: 0;
   }
+}
+
+/* Active state for touch feedback */
+.quantity-btn:active {
+  transform: scale(0.95);
+}
+
+.menu-category-btn:active {
+  transform: scale(0.98);
+  filter: brightness(95%);
+}
+
+.social-icon:active {
+  transform: scale(0.9);
+}
+
+/* Add subtle hover effect for menu items */
+.menu-item {
+  transition: all 0.3s ease;
+  display: flex; /* Ensure flex container */
+  flex-direction: column; /* Ensure vertical stacking */
 }
 
 /* Enhanced mobile responsiveness */
