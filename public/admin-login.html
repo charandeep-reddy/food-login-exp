@@ -2,7 +2,7 @@
 <html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Admin Login - Food Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
@@ -46,7 +46,7 @@
       
       .btn-hover:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         transition: all 0.3s ease;
       }
       
@@ -83,18 +83,37 @@
           min-width: 44px;
         }
       }
+
+      /* Social media icons */
+      .social-icon {
+        transition: transform 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        min-height: 40px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .social-icon:hover {
+        transform: translateY(-3px);
+        background-color: rgba(255, 255, 255, 0.3);
+      }
     </style>
   </head>
   <body class="bg-gray-50 min-h-screen flex flex-col">
     <header class="bg-white shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div class="flex justify-between items-center">
           <a href="/" class="flex items-center">
             <span class="navbar-logo">
-              <img src="images/food-login.webp" alt="Food Login Logo" class="h-10 w-10 rounded-full" />
+              <img src="images/food-login.webp" alt="Food Login Logo" class="h-10 w-10 rounded-full border-2 border-food-yellow" />
             </span>
             <h1 class="text-xl font-bold text-gray-800 tracking-wide ml-3">
-              Food Login
+              Food Login <span class="text-sm font-normal text-gray-500">(Admin)</span>
             </h1>
           </a>
         </div>
@@ -155,7 +174,7 @@
             <button
               type="submit"
               id="loginButton"
-              class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-food-yellow hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-food-yellow transition btn-hover"
+              class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-food-yellow hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-food-yellow transition btn-hover min-h-[44px]"
             >
               Sign in
             </button>
@@ -163,47 +182,41 @@
         </form>
         
         <div class="mt-6 text-center">
-          <a href="/" class="text-food-yellow hover:text-yellow-600 hover:underline flex items-center justify-center">
+          <a href="/" class="text-food-yellow hover:text-yellow-600 hover:underline flex items-center justify-center min-h-[44px]">
             <i class="fas fa-arrow-left mr-2"></i> Return to home
           </a>
         </div>
       </div>
     </div>
 
-    <footer class="bg-food-yellow py-4 text-white text-center text-sm">
+    <footer class="bg-food-yellow text-white shadow-inner mt-auto border-t border-white/20 pt-3 pb-2">
       <div class="container mx-auto px-4">
         <div class="flex flex-col md:flex-row justify-between items-center">
-          <div class="mb-3 md:mb-0">
-            <h2 class="text-xl font-bold text-white tracking-wide">
-              Food Login
-            </h2>
-            <p class="text-white/80 text-sm mt-1">
-              Homemade Telugu food with love
+          <div class="mb-2 md:mb-0 text-center md:text-left">
+            <div class="flex items-center justify-center md:justify-start mb-2">
+              <img src="images/food-login.webp" alt="Food Login Logo" class="h-8 w-8 rounded-full border-2 border-white mr-2" />
+              <h2 class="text-xl font-bold tracking-wide">
+                Food Login
+              </h2>
+            </div>
+            <p class="text-white/80 text-sm max-w-md">
+              Admin Access Portal.
             </p>
           </div>
 
-          <div class="flex space-x-4">
-            <a
-              href="https://www.instagram.com/foodlogin_8"
-              target="_blank"
-              class="text-white hover:text-gray-200 text-xl"
-            >
-              <i class="fab fa-instagram"></i>
-            </a>
-            <a
-              href="https://www.youtube.com/@foodlogin_8"
-              target="_blank"
-              class="text-white hover:text-gray-200 text-xl"
-            >
-              <i class="fab fa-youtube"></i>
-            </a>
-            <a
-              href="https://wa.me/916301972788"
-              target="_blank"
-              class="text-white hover:text-gray-200 text-xl"
-            >
-              <i class="fab fa-whatsapp"></i>
-            </a>
+          <div class="flex flex-col items-center md:items-end">
+            <div class="flex space-x-4 mb-2">
+              <a href="https://www.instagram.com/foodlogin_8" target="_blank" class="social-icon">
+                <i class="fab fa-instagram text-xl"></i>
+              </a>
+              <a href="https://www.youtube.com/@foodlogin_8" target="_blank" class="social-icon">
+                <i class="fab fa-youtube text-xl"></i>
+              </a>
+              <a href="https://wa.me/916301972788" target="_blank" class="social-icon">
+                <i class="fab fa-whatsapp text-xl"></i>
+              </a>
+            </div>
+            <p class="text-sm text-white/60">© 2024 Food Login. All rights reserved.</p>
           </div>
         </div>
       </div>

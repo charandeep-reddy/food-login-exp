@@ -21,9 +21,33 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   */
 
-  // Menu Filtering
+  // Menu Filtering with improved mobile handling
   const categoryButtons = document.querySelectorAll(".menu-category-btn");
   const menuItems = document.querySelectorAll(".menu-item");
+
+  // Check if we're on mobile
+  const isMobile = window.innerWidth <= 480;
+
+  // If on mobile, adjust the menu grid
+  if (isMobile) {
+    const menuGrid = document.getElementById("menu-items");
+    if (menuGrid) {
+      menuGrid.classList.remove("grid-cols-2");
+      menuGrid.classList.add("grid-cols-1");
+    }
+
+    // Center active category button in scroll view on mobile
+    const activeButton = document.querySelector(".menu-category-btn.active");
+    if (activeButton) {
+      setTimeout(() => {
+        activeButton.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center'
+        });
+      }, 100);
+    }
+  }
 
   // Add no-scrollbar utility
   const style = document.createElement("style");
@@ -42,38 +66,139 @@ document.addEventListener("DOMContentLoaded", function () {
     button.addEventListener("click", function () {
       const category = this.getAttribute("data-category");
 
-      // Update active button
+      // Scroll the clicked button to center for better mobile UX
+      if (isMobile) {
+        this.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center'
+        });
+
+        // Scroll menu into view with a slight delay to feel smoother
+        setTimeout(() => {
+          document.getElementById("menu-items").scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+            inline: 'nearest'
+          });
+        }, 300);
+      }
+
+      // Update active button styling
       categoryButtons.forEach((btn) => {
-        btn.classList.remove("active", "bg-food-yellow", "text-white");
+        // Reset all buttons to inactive state
+        btn.classList.remove("active", "bg-food-yellow", "text-white", "border-food-yellow");
         btn.classList.add(
-          "bg-white",
-          "border",
-          "border-food-yellow",
-          "text-food-yellow"
+          "bg-gray-100",
+          "border", // Ensure border class is present for consistent structure
+          "border-gray-300", 
+          "text-gray-700"
         );
       });
 
+      // Set the clicked button to active state
       this.classList.remove(
-        "bg-white",
-        "border",
-        "border-food-yellow",
-        "text-food-yellow"
+        "bg-gray-100",
+        "border-gray-300",
+        "text-gray-700"
       );
-      this.classList.add("active", "bg-food-yellow", "text-white");
+      this.classList.add(
+        "active", 
+        "bg-food-yellow", 
+        "text-white", 
+        "border", // Ensure border class is present
+        "border-food-yellow"
+      );
 
-      // Filter menu items
+      // Add a subtle scale animation for better feedback on mobile
+      if (isMobile) {
+        this.style.transform = "scale(1.05)";
+        setTimeout(() => {
+          this.style.transform = "";
+        }, 300);
+      }
+
+      // Filter menu items with fade animation
       menuItems.forEach((item) => {
         if (
           category === "all" ||
           item.getAttribute("data-category") === category
         ) {
-          item.style.display = "block";
+          // First set display to flex/grid to enable animation
+          item.style.display = isMobile ? "flex" : "block";
+          item.style.opacity = "0";
+          
+          // Then fade in
+          setTimeout(() => {
+            item.style.opacity = "1";
+            item.style.transition = "opacity 0.3s ease";
+          }, 50);
         } else {
-          item.style.display = "none";
+          item.style.opacity = "0";
+          item.style.transition = "opacity 0.3s ease";
+          
+          // Hide after fade out
+          setTimeout(() => {
+            item.style.display = "none";
+          }, 300);
         }
       });
     });
   });
+
+  // Add touch events for better mobile scrolling of category buttons
+  const categoryScroll = document.querySelector(".menu-category-scroll");
+  if (categoryScroll && isMobile) {
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    categoryScroll.addEventListener('touchstart', (e) => {
+      isDown = true;
+      categoryScroll.classList.add('active');
+      startX = e.touches[0].pageX - categoryScroll.offsetLeft;
+      scrollLeft = categoryScroll.scrollLeft;
+    });
+
+    categoryScroll.addEventListener('touchend', () => {
+      isDown = false;
+      categoryScroll.classList.remove('active');
+    });
+
+    categoryScroll.addEventListener('touchmove', (e) => {
+      if(!isDown) return;
+      e.preventDefault();
+      const x = e.touches[0].pageX - categoryScroll.offsetLeft;
+      const walk = (x - startX) * 2;
+      categoryScroll.scrollLeft = scrollLeft - walk;
+    });
+
+    // Hide scroll indicator after user has scrolled
+    categoryScroll.addEventListener('scroll', debounce(() => {
+      const isScrolled = categoryScroll.scrollLeft > 20;
+      if (isScrolled) {
+        const indicator = categoryScroll.querySelector('.scroll-indicator');
+        if (indicator) {
+          indicator.style.opacity = '0';
+          setTimeout(() => {
+            indicator.remove();
+          }, 300);
+        }
+      }
+    }, 200));
+  }
+
+  function debounce(func, wait) {
+    let timeout;
+    return function() {
+      const context = this;
+      const args = arguments;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        func.apply(context, args);
+      }, wait);
+    };
+  }
 
   // Cart functionality
   const cart = {}; // Store quantities for each unique item-weight combination
@@ -90,20 +215,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const uniqueKey = `${itemName}-${selectedWeight}`;
       const currentQuantity = cart[uniqueKey] || 0;
-
-      // Handle "Small Size Oliga" minimum quantity
       const isSmallSizeOliga = itemName === "Small Size Oliga";
+      
       let newQuantity = currentQuantity + change;
 
+      // Small Size Oliga specific logic
       if (isSmallSizeOliga) {
-        if (isSmallSizeCheck && currentQuantity === 0) {
-          newQuantity = 50; // Set default to 50 if user interacts
-        } else if (newQuantity < 50 && newQuantity > 0) {
-          alert("Minimum order quantity for Small Size Oliga is 50.");
-          return;
+        // Prevent going below 50 when decrementing
+        if (newQuantity < 50) {
+           // If user tries to decrement from 50, trigger delete instead
+           if (currentQuantity === 50 && change === -1) {
+             deleteSmallOliga(button); // Call delete function directly
+             return; // Stop further execution in this case
+           }
+           // Otherwise (e.g., trying to add negative value initially), show alert
+           alert("Minimum order quantity for Small Size Oliga is 50.");
+           return; // Prevent change
         }
+        // Limit max quantity
+        newQuantity = Math.min(99, newQuantity); 
       } else {
-        newQuantity = Math.max(0, Math.min(99, newQuantity)); // Default behavior for other items
+        // Default behavior for other items
+        newQuantity = Math.max(0, Math.min(99, newQuantity)); 
       }
 
       cart[uniqueKey] = newQuantity;
@@ -114,20 +247,40 @@ document.addEventListener("DOMContentLoaded", function () {
         quantityDisplay.textContent = newQuantity;
       }
 
-      // Ensure the delete button is always functional for Small Size Oliga
+      // Update Small Size Oliga button state AFTER quantity update
       if (isSmallSizeOliga) {
         const decrementButton = button.parentElement.querySelector(
           ".quantity-btn:first-child"
         );
         if (decrementButton) {
-          decrementButton.innerHTML = `<i class="fas fa-trash"></i>`;
-          decrementButton.classList.add(
-            "bg-red-500",
-            "hover:bg-red-600",
-            "text-white"
-          );
-          decrementButton.onclick = () => deleteSmallOliga(decrementButton);
+          if (newQuantity === 50) {
+            // Set to Delete button
+            decrementButton.innerHTML = `<i class="fas fa-trash"></i>`;
+            decrementButton.classList.add("bg-red-500", "hover:bg-red-600", "text-white");
+            decrementButton.classList.remove("bg-food-yellow", "hover:bg-yellow-500"); // Ensure default style removed
+            decrementButton.onclick = () => deleteSmallOliga(decrementButton);
+          } else { 
+            // Set to Decrement (-) button
+            decrementButton.innerHTML = `-`;
+            decrementButton.classList.remove("bg-red-500", "hover:bg-red-600");
+            decrementButton.classList.add("bg-food-yellow", "hover:bg-yellow-500", "text-white"); // Ensure default style added
+            // Pass true for isSmallSizeCheck flag when setting decrement action
+            decrementButton.onclick = () => changeQuantity(decrementButton, -1, true); 
+          }
         }
+      }
+
+      // Add haptic feedback for mobile devices if available
+      if ('vibrate' in navigator) {
+        navigator.vibrate(40);
+      }
+      
+      // Visual feedback on mobile
+      if (isMobile) {
+        button.classList.add('bg-yellow-400');
+        setTimeout(() => {
+          button.classList.remove('bg-yellow-400');
+        }, 200);
       }
 
       updateCart(menuItem, newQuantity);
@@ -426,30 +579,32 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!itemName) return;
 
       const uniqueKey = `${itemName}-Single`;
-      const quantityDisplay = document.createElement("div");
-      quantityDisplay.className = "quantity-control";
+      const controlsContainer = document.createElement("div");
+      controlsContainer.className = "quantity-control";
 
       // Set initial quantity to 50
-      cart[uniqueKey] = 50;
+      const initialQuantity = 50;
+      cart[uniqueKey] = initialQuantity;
 
-      quantityDisplay.innerHTML = `
+      // Initial state: Delete button because quantity is 50
+      controlsContainer.innerHTML = `
         <button class="quantity-btn bg-red-500 text-white hover:bg-red-600" onclick="deleteSmallOliga(this)">
           <i class="fas fa-trash"></i>
         </button>
-        <span class="quantity-display">50</span>
-        <button class="quantity-btn" onclick="changeQuantity(this, 1)">
+        <span class="quantity-display">${initialQuantity}</span>
+        <button class="quantity-btn bg-food-yellow text-white hover:bg-yellow-500" onclick="changeQuantity(this, 1, true)">
           +
         </button>
       `;
 
       // Replace the "Add 50 to Cart" button with quantity controls
-      const controlsContainer = menuItem.querySelector("#smallOligaControls");
-      if (controlsContainer) {
-        controlsContainer.replaceWith(quantityDisplay);
+      const addButtonContainer = menuItem.querySelector("#smallOligaControls");
+      if (addButtonContainer) {
+        addButtonContainer.replaceWith(controlsContainer);
       }
 
       // Update the cart immediately after adding
-      updateCart(menuItem, 50);
+      updateCart(menuItem, initialQuantity);
     } catch (error) {
       console.error("Error adding Small Size Oliga to cart:", error);
     }
@@ -468,30 +623,42 @@ document.addEventListener("DOMContentLoaded", function () {
       // Remove the item from the cart
       delete cart[uniqueKey];
 
-      // Reset the controls to "Add 50 to Cart" before updating the cart
-      const controlsContainer = document.createElement("div");
-      controlsContainer.id = "smallOligaControls";
-      controlsContainer.className = "quantity-control";
-      controlsContainer.innerHTML = `
+      // Reset the controls to "Add 50 to Cart" button
+      const addButtonContainer = document.createElement("div");
+      addButtonContainer.id = "smallOligaControls";
+      addButtonContainer.className = "quantity-control mt-2"; // Keep original margin if needed
+      addButtonContainer.innerHTML = `
         <button
-          class="bg-food-yellow text-white px-4 py-2 rounded-full font-medium hover:bg-yellow-500 transition"
+          class="bg-food-yellow text-white px-4 py-2 rounded-lg font-medium hover:bg-yellow-500 transition btn-hover"
           onclick="addSmallOligaToCart(this)"
         >
           Add 50 to Cart
         </button>
       `;
 
-      const currentControls = menuItem.querySelector(".quantity-control");
+      const currentControls = button.closest(".quantity-control");
       if (currentControls) {
-        currentControls.replaceWith(controlsContainer);
+        currentControls.replaceWith(addButtonContainer);
       }
 
-      // Update cart after UI changes to ensure proper synchronization
+      // Update cart (quantity 0) after UI changes
       updateCart(menuItem, 0);
+      updateTotalPrice(); // Ensure total price is updated
+      updateCartQuantityBadge(); // Ensure badge is updated
     } catch (error) {
       console.error("Error deleting Small Size Oliga from menu:", error);
     }
   }
+
+  // Handle window resize for responsive adjustments
+  window.addEventListener('resize', function() {
+    const newIsMobile = window.innerWidth <= 480;
+    
+    // Only update if mobile status changed
+    if (newIsMobile !== isMobile) {
+      location.reload();
+    }
+  });
 
   // Expose functions globally
   window.changeQuantity = changeQuantity;
