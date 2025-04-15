@@ -194,7 +194,75 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Cart functionality
-  const cart = {}; // Store quantities for each unique item-weight combination
+  // Load cart from localStorage or initialize as empty object
+  const cart = JSON.parse(localStorage.getItem("cart") || "{}"); 
+
+  // Helper function to save cart to localStorage
+  function saveCartToLocalStorage() {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
+
+  // Function to initialize UI based on loaded cart
+  function initializeUIFromCart() {
+    menuItems.forEach(menuItem => {
+      const itemName = menuItem.querySelector("h3")?.textContent.trim();
+      if (!itemName) return;
+
+      const weightSelect = menuItem.querySelector(".pickle-quantity");
+      const selectedWeight = weightSelect ? weightSelect.value : "Single";
+      const uniqueKey = `${itemName}-${selectedWeight}`;
+      const quantity = cart[uniqueKey] || 0;
+
+      const quantityDisplay = menuItem.querySelector(".quantity-display");
+      if (quantityDisplay) {
+        quantityDisplay.textContent = quantity;
+      }
+
+      // Special handling for Small Size Oliga initial state
+      if (itemName === "Small Size Oliga") {
+        const controlsContainer = menuItem.querySelector("#smallOligaControls");
+        if (controlsContainer && quantity >= 50) {
+          // Replace "Add 50" button with quantity controls
+          const newControls = document.createElement("div");
+          newControls.className = "quantity-control";
+          const deleteIcon = quantity === 50 ? '<i class="fas fa-trash"></i>' : '-';
+          const deleteBtnClass = quantity === 50 ? 'bg-red-500 text-white lg:hover:bg-red-600 active:bg-red-700' : 'bg-food-yellow text-white lg:hover:bg-yellow-500 active:bg-yellow-600';
+          const deleteOnClick = quantity === 50 ? 'deleteSmallOliga(this)' : 'changeQuantity(this, -1, true)';
+          
+          newControls.innerHTML = `
+            <button class="quantity-btn ${deleteBtnClass} active:scale-95" onclick="${deleteOnClick}">
+              ${deleteIcon}
+            </button>
+            <span class="quantity-display">${quantity}</span>
+            <button class="quantity-btn bg-food-yellow text-white lg:hover:bg-yellow-500 active:bg-yellow-600 active:scale-95" onclick="changeQuantity(this, 1, true)">
+              +
+            </button>
+          `;
+          controlsContainer.replaceWith(newControls);
+        } else if (controlsContainer && quantity === 0) {
+           // Ensure the "Add 50" button is shown if quantity is 0
+           controlsContainer.innerHTML = `
+             <button
+               class="bg-food-yellow text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-sm md:text-base lg:hover:bg-yellow-500 transition active:bg-yellow-600"
+               onclick="addSmallOligaToCart(this)"
+             >
+               Add 50 to Cart
+             </button>
+           `;
+        }
+      } else if (weightSelect) {
+         // Ensure correct weight is selected and quantity displayed for pickles
+         handleWeightChange(weightSelect);
+      }
+    });
+    updateCartUI(); // Update badge and total price based on loaded cart
+  }
+
+  // Function to update cart modal UI and badge (combines parts of updateTotalPrice and updateCartQuantityBadge)
+  function updateCartUI() {
+    updateTotalPrice();
+    updateCartQuantityBadge();
+  }
 
   function changeQuantity(button, change, isSmallSizeCheck = false) {
     try {
@@ -214,25 +282,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Small Size Oliga specific logic
       if (isSmallSizeOliga) {
-        // Prevent going below 50 when decrementing
         if (newQuantity < 50) {
-           // If user tries to decrement from 50, trigger delete instead
            if (currentQuantity === 50 && change === -1) {
-             deleteSmallOliga(button); // Call delete function directly
-             return; // Stop further execution in this case
+             deleteSmallOliga(button);
+             return;
            }
-           // Otherwise (e.g., trying to add negative value initially), show alert
            alert("Minimum order quantity for Small Size Oliga is 50.");
-           return; // Prevent change
+           return;
         }
-        // Limit max quantity
         newQuantity = Math.min(99, newQuantity); 
       } else {
-        // Default behavior for other items
         newQuantity = Math.max(0, Math.min(99, newQuantity)); 
       }
 
       cart[uniqueKey] = newQuantity;
+      saveCartToLocalStorage();
 
       const quantityDisplay =
         button.parentElement.querySelector(".quantity-display");
@@ -240,31 +304,26 @@ document.addEventListener("DOMContentLoaded", function () {
         quantityDisplay.textContent = newQuantity;
       }
 
-      // Update Small Size Oliga button state AFTER quantity update
       if (isSmallSizeOliga) {
         const decrementButton = button.parentElement.querySelector(
           ".quantity-btn:first-child"
         );
         if (decrementButton) {
           if (newQuantity === 50) {
-            // Set to Delete button
             decrementButton.innerHTML = `<i class="fas fa-trash"></i>`;
             decrementButton.classList.add("bg-red-500", "hover:bg-red-600", "text-white");
-            decrementButton.classList.remove("bg-food-yellow", "hover:bg-yellow-500"); // Ensure default style removed
+            decrementButton.classList.remove("bg-food-yellow", "hover:bg-yellow-500");
             decrementButton.onclick = () => deleteSmallOliga(decrementButton);
           } else { 
-            // Set to Decrement (-) button
             decrementButton.innerHTML = `-`;
             decrementButton.classList.remove("bg-red-500", "hover:bg-red-600");
-            decrementButton.classList.add("bg-food-yellow", "hover:bg-yellow-500", "text-white"); // Ensure default style added
-            // Pass true for isSmallSizeCheck flag when setting decrement action
+            decrementButton.classList.add("bg-food-yellow", "hover:bg-yellow-500", "text-white");
             decrementButton.onclick = () => changeQuantity(decrementButton, -1, true); 
           }
         }
       }
 
-      // Add haptic feedback for mobile devices if available
-      if ('vibrate' in navigator && isMobile) { // Only vibrate on mobile
+      if ('vibrate' in navigator && isMobile) {
         navigator.vibrate(40);
       }
 
@@ -307,10 +366,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const selectedWeight = weightSelect ? weightSelect.value : "Single";
       const uniqueKey = `${itemName}-${selectedWeight}`;
 
-      // Get price directly from HTML
       let basePrice;
       if (weightSelect) {
-        // For items with weight selection (pickles)
         const selectedOption = weightSelect.options[weightSelect.selectedIndex];
         if (selectedOption) {
           const priceMatch = selectedOption.textContent.match(/₹(\d+)/);
@@ -319,11 +376,9 @@ document.addEventListener("DOMContentLoaded", function () {
           basePrice = 0;
         }
       } else {
-        // For regular items
         const priceText =
           menuItem.querySelector(".text-food-yellow")?.textContent;
 
-        // Handle "Each ₹X" format for Small Size Oliga
         if (priceText && priceText.includes("Each")) {
           basePrice = parseInt(priceText.replace(/[^0-9]/g, "")) || 0;
         } else {
@@ -341,8 +396,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (cartItem) {
           cartItem.remove();
           delete cart[uniqueKey];
+          saveCartToLocalStorage();
         }
-        syncQuantityToMainPage(uniqueKey, 0); // Sync menu with cart
+        syncQuantityToMainPage(uniqueKey, 0);
       } else {
         if (!cartItem) {
           cartItem = document.createElement("div");
@@ -354,7 +410,6 @@ document.addEventListener("DOMContentLoaded", function () {
           cartItem.className =
             "grid grid-cols-[2fr_0.7fr_0.8fr_0.3fr] items-center border-b pb-2";
         } else {
-          // Update existing item data
           cartItem.dataset.basePrice = basePrice;
           cartItem.dataset.quantity = quantity;
         }
@@ -395,8 +450,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (cartItem) {
         cartItem.remove();
         delete cart[uniqueKey];
-
-        // Always call syncQuantityToMainPage when an item is deleted
+        saveCartToLocalStorage();
         syncQuantityToMainPage(uniqueKey, 0);
       }
 
@@ -422,13 +476,11 @@ document.addEventListener("DOMContentLoaded", function () {
           if (quantityDisplay) {
             quantityDisplay.textContent = quantity;
 
-            // Also update the weight select if it exists
             if (weightSelect) {
               handleWeightChange(weightSelect);
             }
           }
 
-          // Reset controls for Small Size Oliga
           if (name === "Small Size Oliga" && quantity === 0) {
             const controlsContainer = document.createElement("div");
             controlsContainer.id = "smallOligaControls";
@@ -504,13 +556,11 @@ document.addEventListener("DOMContentLoaded", function () {
       if (cartModal && mainContent) {
         cartModal.classList.toggle("hidden");
         mainContent.classList.toggle("active");
-        body.classList.toggle("modal-open"); // Add this class toggle
+        body.classList.toggle("modal-open");
 
-        // Store scroll position when opening modal
         if (!cartModal.classList.contains("hidden")) {
           body.style.top = `-${window.scrollY}px`;
         } else {
-          // Restore scroll position when closing
           const scrollY = parseInt(document.body.style.top || "0");
           body.style.top = "";
           window.scrollTo(0, Math.abs(scrollY));
@@ -529,7 +579,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      // Store cart items in localStorage
       const cartStorage = {};
       const priceStorage = {};
 
@@ -540,14 +589,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const basePrice = parseInt(item.dataset.basePrice) || 0;
         const key = `${name}-${weight}`;
 
-        cartStorage[key] = quantity;
+        cartStorage[key] = cart[key] || 0; 
         priceStorage[key] = basePrice;
       });
 
       localStorage.setItem("cart", JSON.stringify(cartStorage));
       localStorage.setItem("prices", JSON.stringify(priceStorage));
 
-      // Redirect to cart page
       window.location.href = "/checkout";
     } catch (error) {
       console.error("Error preparing order:", error);
@@ -567,11 +615,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const controlsContainer = document.createElement("div");
       controlsContainer.className = "quantity-control";
 
-      // Set initial quantity to 50
       const initialQuantity = 50;
       cart[uniqueKey] = initialQuantity;
+      saveCartToLocalStorage();
 
-      // Initial state: Delete button because quantity is 50
       controlsContainer.innerHTML = `
         <button class="quantity-btn bg-red-500 text-white lg:hover:bg-red-600 active:bg-red-700 active:scale-95" onclick="deleteSmallOliga(this)">
           <i class="fas fa-trash"></i>
@@ -582,13 +629,11 @@ document.addEventListener("DOMContentLoaded", function () {
         </button>
       `;
 
-      // Replace the "Add 50 to Cart" button with quantity controls
       const addButtonContainer = menuItem.querySelector("#smallOligaControls");
       if (addButtonContainer) {
         addButtonContainer.replaceWith(controlsContainer);
       }
 
-      // Update the cart immediately after adding
       updateCart(menuItem, initialQuantity);
     } catch (error) {
       console.error("Error adding Small Size Oliga to cart:", error);
@@ -605,13 +650,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const uniqueKey = `${itemName}-Single`;
 
-      // Remove the item from the cart
       delete cart[uniqueKey];
+      saveCartToLocalStorage();
 
-      // Reset the controls to "Add 50 to Cart" button
       const addButtonContainer = document.createElement("div");
       addButtonContainer.id = "smallOligaControls";
-      addButtonContainer.className = "quantity-control mt-2"; // Keep original margin if needed
+      addButtonContainer.className = "quantity-control mt-2";
       addButtonContainer.innerHTML = `
         <button
           class="bg-food-yellow text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-sm md:text-base lg:hover:bg-yellow-500 transition active:bg-yellow-600"
@@ -626,21 +670,16 @@ document.addEventListener("DOMContentLoaded", function () {
         currentControls.replaceWith(addButtonContainer);
       }
 
-      // Update cart (quantity 0) after UI changes
       updateCart(menuItem, 0);
-      updateTotalPrice(); // Ensure total price is updated
-      updateCartQuantityBadge(); // Ensure badge is updated
     } catch (error) {
       console.error("Error deleting Small Size Oliga from menu:", error);
     }
   }
 
-  // Mobile menu functionality
   function openMobileMenu() {
     document.getElementById('mobileMenu').classList.add('open');
     document.getElementById('mobileMenuOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
-    // Change icon to 'X'
     const menuBtnIcon = document.querySelector('#mobileMenuBtn i');
     if (menuBtnIcon) {
       menuBtnIcon.classList.remove('fa-bars');
@@ -652,7 +691,6 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('mobileMenu').classList.remove('open');
     document.getElementById('mobileMenuOverlay').classList.remove('open');
     document.body.style.overflow = '';
-    // Change icon back to 'bars'
     const menuBtnIcon = document.querySelector('#mobileMenuBtn i');
     if (menuBtnIcon) {
       menuBtnIcon.classList.remove('fa-times');
@@ -660,17 +698,35 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Handle window resize for responsive adjustments
   window.addEventListener('resize', function() {
     const newIsMobile = window.innerWidth <= 480;
-    
-    // Only update if mobile status changed
     if (newIsMobile !== isMobile) {
       location.reload();
     }
   });
 
-  // Expose functions globally
+  initializeUIFromCart();
+
+  const cartItemsContainer = document.getElementById("cartItems");
+  if (cartItemsContainer) {
+      cartItemsContainer.innerHTML = '';
+      Object.entries(cart).forEach(([key, quantity]) => {
+          if (quantity > 0) {
+              const [itemName, itemWeight] = key.split('-');
+              const menuItem = Array.from(menuItems).find(item => {
+                  const name = item.querySelector("h3")?.textContent.trim();
+                  const weightSelect = item.querySelector(".pickle-quantity");
+                  const weight = weightSelect ? weightSelect.value : "Single";
+                  return name === itemName && weight === itemWeight;
+              });
+              if (menuItem) {
+                  updateCart(menuItem, quantity); 
+              }
+          }
+      });
+      updateTotalPrice();
+  }
+
   window.changeQuantity = changeQuantity;
   window.handleWeightChange = handleWeightChange;
   window.toggleCartModal = toggleCartModal;
