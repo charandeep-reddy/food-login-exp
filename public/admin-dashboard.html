@@ -168,7 +168,6 @@
         inset: 0;
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 50;
-        overflow-y: auto;
       }
       .modal-content {
         background-color: white;
@@ -178,21 +177,56 @@
         margin: 2rem auto;
         max-height: 90vh;
         overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+      }
+      /* Mobile specific modal styles */
+      .modal-mobile {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-height: 85vh;
+        background-color: white;
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        transform: translateY(100%);
+        transition: transform 0.3s ease-out;
+        display: flex;
+        flex-direction: column;
+        z-index: 60;
+      }
+      .modal-mobile.open {
+        transform: translateY(0);
+      }
+      .modal-mobile-content {
+        overflow-y: auto;
+        padding: 1rem;
+        padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+        flex-grow: 1;
+      }
+      .modal-mobile-header {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+      }
+      .modal-mobile-footer {
+        padding: 0.75rem 1rem;
+        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        flex-shrink: 0;
       }
       @media (max-width: 640px) {
-        .modal-content {
-          width: 95%;
-          margin: 1rem auto;
-        }
-        .display-none-mobile {
+        #orderDetailsModal .modal-content:not(.modal-mobile) {
           display: none;
-        }
-        .mobile-text-sm {
-          font-size: 0.875rem;
-        }
-        .mobile-py-2 {
-          padding-top: 0.5rem;
-          padding-bottom: 0.5rem;
         }
       }
       /* Mobile optimizations */
@@ -220,7 +254,7 @@
       <div class="flex flex-col items-center">
         <svg class="animate-spin h-12 w-12 text-food-yellow mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 7.962 7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
         <p class="text-gray-700 text-lg">Loading dashboard...</p>
       </div>
@@ -401,7 +435,7 @@
                     <div class="flex items-center justify-center">
                       <svg class="animate-spin h-5 w-5 text-food-yellow mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 7.962 7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
                       <span>Loading orders...</span>
                     </div>
@@ -449,22 +483,9 @@
       </div>
     </div>
     <!-- Order Details Modal -->
-    <div id="orderDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display:none;">
-      <div class="modal-content animate-fade-in p-6 shadow-xl">
-        <div class="flex justify-between items-center mb-4 border-b pb-4">
-          <h3 class="text-lg font-semibold text-gray-900">Order Details</h3>
-          <button onclick="closeOrderDetailsModal()" class="text-gray-500 hover:text-gray-700">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div id="orderDetailsContent" class="space-y-4">
-          <!-- Order details will be dynamically added here -->
-        </div>
-        <div class="mt-6 pt-4 border-t flex justify-end">
-          <button onclick="closeOrderDetailsModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
-            Close
-          </button>
-        </div>
+    <div id="orderDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 z-50" style="display:none;" onclick="closeOrderDetailsModalOnClickOutside(event)">
+      <div class="">
+        <!-- Content will be injected by JS -->
       </div>
     </div>
     <!-- Success Notification -->
@@ -496,6 +517,7 @@
       let orders = [];
       let orderIdToDelete = null;
       let uniqueCustomers = new Set();
+      let currentOrderDetails = null; // Global variable to store the current order being viewed
       // Calculate dashboard stats
       function calculateStats(orders) {
         // Total orders count
@@ -519,7 +541,7 @@
           document.getElementById("refreshBtn").innerHTML = `
             <svg class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
             Refreshing...
           `;
@@ -627,148 +649,224 @@
       }
       // Detect if user is on mobile
       function isMobileDevice() {
-        return (window.innerWidth <= 640) || 
+        return (window.innerWidth <= 768) || 
                (navigator.maxTouchPoints > 0 && 
                 /Android|iPhone|iPad|iPod/.test(navigator.userAgent));
       }
       // Optimize modal display for mobile
       function viewOrderDetails(orderId) {
-        const order = orders.find(o => o._id === orderId);
-        if (!order) return;
-        const orderDetailsContent = document.getElementById("orderDetailsContent");
+        currentOrderDetails = orders.find(o => o._id === orderId);
+        if (!currentOrderDetails) return;
+        
+        const order = currentOrderDetails;
         const orderDetailsModal = document.getElementById("orderDetailsModal");
+        const modalContainer = orderDetailsModal.querySelector("div:first-child");
         const orderDate = new Date(order.createdAt).toLocaleString();
-        let modalClass = isMobileDevice() ? 
-            'fixed inset-x-0 bottom-0 transform translate-y-0 rounded-t-xl ios-bottom-padding' : 
-            'modal-content animate-fade-in';
-        // Update modal container class
-        document.querySelector("#orderDetailsModal > div").className = modalClass;
-        // Build HTML content (with mobile optimization)
-        let orderDetailsHTML = `
-          <div class="bg-gray-50 p-3 sm:p-4 rounded-lg mb-3 sm:mb-4">
-            <div class="flex justify-between items-center">
-              <h4 class="font-semibold">Order Information</h4>
-              <span class="text-sm text-gray-500">${orderDate}</span>
+        const isMobile = isMobileDevice();
+
+        modalContainer.innerHTML = '';
+        modalContainer.className = '';
+
+        if (isMobile) {
+          modalContainer.classList.add('modal-mobile');
+          modalContainer.innerHTML = `
+            <div class="modal-mobile-header">
+              <h3 class="text-lg font-semibold text-gray-900">Order Details</h3>
+              <button onclick="closeOrderDetailsModal()" class="text-gray-500 hover:text-gray-700 touch-target">
+                <i class="fas fa-times text-xl"></i>
+              </button>
             </div>
-            <div class="text-sm mt-2">
-              <p>Order ID: <span class="font-medium">${order._id}</span></p>
-              <p>Status: <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 mt-1">${order.paymentStatus || 'Pending'}</span></p>
-            </div>
-          </div>
-          <div class="mb-4">
-            <h4 class="font-semibold mb-2">Customer Information</h4>
-            <div class="text-sm">
-              <p><span class="text-gray-600">Name:</span> ${order.name}</p>
-              <p><span class="text-gray-600">Phone:</span> ${order.phone}</p>
-              <p><span class="text-gray-600">Address:</span> ${order.address}</p>
-              <p><span class="text-gray-600">City:</span> ${order.city}, ${order.pincode}</p>
-            </div>
-          </div>
-          <div>
-            <h4 class="font-semibold mb-2">Order Items</h4>
-            <div class="space-y-2 max-h-40 overflow-y-auto">
-              ${order.cartItems.map(item => `
-                <div class="order-detail-item">
-                  <div>
-                    <p class="font-medium">${item.name} ${item.weight ? `(${item.weight})` : ""}</p>
-                    <p class="text-sm text-gray-500">Qty: ${item.qty}</p>
-                  </div>
-                  <div class="font-medium">₹${item.price}</div>
+            <div class="modal-mobile-content space-y-4">
+              <div class="bg-gray-50 p-3 rounded-lg">
+                <div class="flex justify-between items-center mb-1">
+                  <h4 class="font-semibold text-gray-700">Order Information</h4>
+                  <span class="text-xs text-gray-500">${orderDate}</span>
                 </div>
-              `).join("")}
+                <p class="text-xs text-gray-600">ID: <span class="font-medium text-gray-800">${order._id}</span></p>
+                <p class="text-xs text-gray-600">Status: <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded-full ${getStatusColor(order.paymentStatus || 'Pending')} mt-1">${order.paymentStatus || 'Pending'}</span></p>
+              </div>
+              <div class="mb-4">
+                <h4 class="font-semibold text-gray-700 mb-1">Customer</h4>
+                <div class="text-sm space-y-0.5">
+                  <p><span class="text-gray-600">Name:</span> ${order.name}</p>
+                  <p><span class="text-gray-600">Phone:</span> <a href="tel:${order.phone}" class="text-blue-600 hover:underline">${order.phone}</a></p>
+                  <p><span class="text-gray-600">Address:</span> ${order.address}, ${order.city}, ${order.pincode}</p>
+                </div>
+              </div>
+              <div>
+                <h4 class="font-semibold text-gray-700 mb-1">Items</h4>
+                <div class="space-y-2">
+                  ${order.cartItems.map(item => `
+                    <div class="order-detail-item">
+                      <div>
+                        <p class="font-medium text-sm">${item.name} ${item.weight ? `(${item.weight})` : ""}</p>
+                        <p class="text-xs text-gray-500">Qty: ${item.qty}</p>
+                      </div>
+                      <div class="font-medium text-sm">₹${item.price}</div>
+                    </div>
+                  `).join("")}
+                </div>
+              </div>
+              <div class="border-t mt-4 pt-3">
+                <div class="flex justify-between items-center font-bold text-base">
+                  <span>Order Total:</span>
+                  <span>₹${order.total}</span>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="border-t mt-4 pt-4">
-            <div class="flex justify-between items-center font-bold">
-              <span>Order Total:</span>
-              <span>₹${order.total}</span>
+            <div class="modal-mobile-footer">
+               <button onclick="downloadOrderDetails()" class="px-3 py-1.5 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center touch-target">
+                 <i class="fas fa-download mr-1.5"></i> Download
+               </button>
+               <button onclick="closeOrderDetailsModal()" class="px-3 py-1.5 text-sm bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition touch-target">
+                 Close
+               </button>
             </div>
-          </div>
-        `;
-        // Set modal content
-        orderDetailsContent.innerHTML = orderDetailsHTML;
-        // Show modal
-        document.getElementById("orderDetailsModal").style.display = "flex";
-      }
-      // Close order details modal
-      function closeOrderDetailsModal() {
-        document.getElementById("orderDetailsModal").style.display = "none";
-      }
-      // Search functionality
-      document.getElementById("searchInput").addEventListener("input", (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        const filteredOrders = orders.filter(
-          (order) =>
-            order.name?.toLowerCase().includes(searchTerm) ||
-            order.phone?.toString().includes(searchTerm) ||
-            order.address?.toLowerCase().includes(searchTerm) ||
-            order.city?.toLowerCase().includes(searchTerm) ||
-            order.pincode?.toString().includes(searchTerm)
-        );
-        displayOrders(filteredOrders);
-        document.getElementById("orderCount").textContent = filteredOrders.length;
-      });
-      // Refresh button
-      document.getElementById("refreshBtn").addEventListener("click", fetchOrders);
-      // Delete order functionality
-      function showDeleteModal(orderId) {
-        orderIdToDelete = orderId;
-        document.getElementById("deleteModal").classList.remove("hidden");
-      }
-      function closeDeleteModal() {
-        orderIdToDelete = null;
-        document.getElementById("deleteModal").classList.add("hidden");
-      }
-      document
-        .getElementById("confirmDeleteBtn")
-        .addEventListener("click", async () => {
-          if (!orderIdToDelete) return;
-          const deleteBtn = document.getElementById("confirmDeleteBtn");
-          deleteBtn.disabled = true;
-          deleteBtn.innerHTML = `
-            <svg class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Deleting...
           `;
-          try {
-            const response = await fetch(`/api/orders/${orderIdToDelete}`, {
-              method: "DELETE",
-            });
-            if (response.ok) {
-              await fetchOrders();
-              closeDeleteModal();
-              showNotification("Order deleted successfully");
-            } else {
-              throw new Error("Failed to delete order");
-            }
-          } catch (error) {
-            console.error("Error:", error);
-            showNotification("Failed to delete order");
-          } finally {
-            deleteBtn.disabled = false;
-            deleteBtn.innerHTML = '<i class="fas fa-trash-alt mr-2"></i> Delete';
-          }
-        });
-      function logout() {
-        localStorage.removeItem("adminLoggedIn");
-        window.location.href = "/admin";
+          requestAnimationFrame(() => {
+             modalContainer.classList.add('open');
+          });
+
+        } else {
+          modalContainer.classList.add('modal-content', 'p-6', 'shadow-xl');
+          modalContainer.innerHTML = `
+            <div class="flex justify-between items-center mb-4 border-b pb-4">
+              <h3 class="text-lg font-semibold text-gray-900">Order Details</h3>
+              <button onclick="closeOrderDetailsModal()" class="text-gray-500 hover:text-gray-700 touch-target">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div id="orderDetailsContentDesktop" class="space-y-4 flex-grow overflow-y-auto">
+            </div>
+            <div class="mt-6 pt-4 border-t flex justify-end space-x-3">
+              <button onclick="downloadOrderDetails()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center touch-target">
+                <i class="fas fa-download mr-2"></i> Download
+              </button>
+              <button onclick="closeOrderDetailsModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition touch-target">
+                Close
+              </button>
+            </div>
+          `;
+          const desktopContentContainer = modalContainer.querySelector('#orderDetailsContentDesktop');
+          desktopContentContainer.innerHTML = `
+            <div class="bg-gray-50 p-4 rounded-lg mb-4">
+              <div class="flex justify-between items-center">
+                <h4 class="font-semibold">Order Information</h4>
+                <span class="text-sm text-gray-500">${orderDate}</span>
+              </div>
+              <div class="text-sm mt-2">
+                <p>Order ID: <span class="font-medium">${order._id}</span></p>
+                <p>Status: <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.paymentStatus || 'Pending')} mt-1">${order.paymentStatus || 'Pending'}</span></p>
+              </div>
+            </div>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">Customer Information</h4>
+              <div class="text-sm">
+                <p><span class="text-gray-600">Name:</span> ${order.name}</p>
+                <p><span class="text-gray-600">Phone:</span> <a href="tel:${order.phone}" class="text-blue-600 hover:underline">${order.phone}</a></p>
+                <p><span class="text-gray-600">Address:</span> ${order.address}, ${order.city}, ${order.pincode}</p>
+              </div>
+            </div>
+            <div>
+              <h4 class="font-semibold mb-2">Order Items</h4>
+              <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
+                ${order.cartItems.map(item => `
+                  <div class="order-detail-item">
+                    <div>
+                      <p class="font-medium">${item.name} ${item.weight ? `(${item.weight})` : ""}</p>
+                      <p class="text-sm text-gray-500">Qty: ${item.qty}</p>
+                    </div>
+                    <div class="font-medium">₹${item.price}</div>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+            <div class="border-t mt-4 pt-4">
+              <div class="flex justify-between items-center font-bold">
+                <span>Order Total:</span>
+                <span>₹${order.total}</span>
+              </div>
+            </div>
+          `;
+        }
+
+        orderDetailsModal.style.display = "flex";
+        if (!isMobile) {
+           orderDetailsModal.classList.add('items-center', 'justify-center');
+        } else {
+           orderDetailsModal.classList.remove('items-center', 'justify-center');
+        }
       }
-      // Add touchstart handling for better mobile responsiveness
+
+      function closeOrderDetailsModal() {
+        const orderDetailsModal = document.getElementById("orderDetailsModal");
+        const modalContainer = orderDetailsModal.querySelector("div:first-child");
+
+        if (modalContainer.classList.contains('modal-mobile')) {
+          modalContainer.classList.remove('open');
+          setTimeout(() => {
+            orderDetailsModal.style.display = "none";
+            modalContainer.className = '';
+            modalContainer.innerHTML = '';
+            currentOrderDetails = null;
+          }, 300);
+        } else {
+          orderDetailsModal.style.display = "none";
+          modalContainer.className = '';
+          modalContainer.innerHTML = '';
+          currentOrderDetails = null;
+        }
+      }
+      
+      function closeOrderDetailsModalOnClickOutside(event) {
+          const orderDetailsModal = document.getElementById("orderDetailsModal");
+          if (event.target === orderDetailsModal) {
+              closeOrderDetailsModal();
+          }
+      }
+
+      function downloadOrderDetails() {
+        if (!currentOrderDetails) return;
+
+        const order = currentOrderDetails;
+        const orderDate = new Date(order.createdAt).toLocaleString();
+        let content = `Order Details - Food Login\n`;
+        content += `=============================\n`;
+        content += `Order ID: ${order._id}\n`;
+        content += `Date: ${orderDate}\n`;
+        content += `Status: ${order.paymentStatus || 'Pending'}\n\n`;
+        content += `Customer Information:\n`;
+        content += `---------------------\n`;
+        content += `Name: ${order.name}\n`;
+        content += `Phone: ${order.phone}\n`;
+        content += `Address: ${order.address}, ${order.city}, ${order.pincode}\n\n`;
+        content += `Order Items:\n`;
+        content += `------------\n`;
+        order.cartItems.forEach(item => {
+          content += `- ${item.name} ${item.weight ? `(${item.weight})` : ""} (Qty: ${item.qty}) - ₹${item.price}\n`;
+        });
+        content += `\n=============================\n`;
+        content += `Total: ₹${order.total}\n`;
+
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `order_${order._id}.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+      }
+
       document.addEventListener('touchstart', function() {}, {passive: true});
-      // Close modals when clicking outside
+      
       window.addEventListener('click', function(event) {
         const deleteModal = document.getElementById('deleteModal');
-        const orderDetailsModal = document.getElementById('orderDetailsModal');
         if (event.target === deleteModal) {
           closeDeleteModal();
         }
-        if (event.target === orderDetailsModal) {
-          closeOrderDetailsModal();
-        }
       });
-      // Initial load
+      
       fetchOrders();
     </script>
   </body>
