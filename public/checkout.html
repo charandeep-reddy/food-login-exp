@@ -2,7 +2,10 @@
 <html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>Checkout - Food Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
@@ -43,37 +46,45 @@
         flex-direction: column;
       }
 
-      h1, h2, h3 {
+      h1,
+      h2,
+      h3 {
         font-family: "Lora", serif;
         line-height: 1.2;
       }
-      
+
       /* Make the main content take up all available space */
       .main-content {
         flex: 1 0 auto;
       }
-      
+
       /* Make footer stick to bottom */
       footer {
         flex-shrink: 0;
         margin-top: auto;
       }
-      
+
       .btn-hover:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Adjusted shadow */
         transition: all 0.3s ease;
       }
-      
+
       @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
-      
+
       .animate-fade-in {
         animation: fadeIn 0.3s ease forwards;
       }
-      
+
       /* Custom scrollbar */
       ::-webkit-scrollbar {
         width: 8px;
@@ -84,21 +95,23 @@
         border-radius: 10px;
       }
       ::-webkit-scrollbar-thumb {
-        background: #FFD700;
+        background: #ffd700;
         border-radius: 10px;
       }
       ::-webkit-scrollbar-thumb:hover {
         background: #e6c200;
       }
-      
+
       /* Better touch targets */
       @media (max-width: 768px) {
-        button, a, .clickable {
+        button,
+        a,
+        .clickable {
           min-height: 44px;
           min-width: 44px;
         }
       }
-      
+
       /* Loading overlay */
       .loading-overlay {
         position: fixed;
@@ -136,27 +149,50 @@
   <body class="bg-gray-50 min-h-screen flex flex-col">
     <div id="loadingOverlay" class="loading-overlay hidden">
       <div class="flex flex-col items-center">
-        <svg class="animate-spin h-12 w-12 text-food-yellow mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        <svg
+          class="animate-spin h-12 w-12 text-food-yellow mb-4"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
         </svg>
         <p class="text-gray-700 text-lg">Processing your order...</p>
       </div>
     </div>
-    
+
     <header class="bg-white shadow-sm">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div class="flex justify-between items-center">
           <a href="/" class="flex items-center">
             <span class="navbar-logo">
-              <img src="images/food-login.webp" alt="Food Login Logo" class="h-10 w-10 rounded-full border-2 border-food-yellow" />
+              <img
+                src="images/food-login.webp"
+                alt="Food Login Logo"
+                class="h-10 w-10 rounded-full border-2 border-food-yellow"
+              />
             </span>
             <h1 class="text-xl font-bold text-gray-800 tracking-wide ml-3">
               Food Login
             </h1>
           </a>
-          
-          <a href="/#menu" class="text-gray-600 hover:text-food-yellow transition flex items-center text-sm font-medium">
+
+          <a
+            href="/#menu"
+            class="text-gray-600 hover:text-food-yellow transition flex items-center text-sm font-medium"
+          >
             <i class="fas fa-arrow-left mr-2"></i>
             <span class="hidden sm:inline">Back to Menu</span>
           </a>
@@ -164,17 +200,27 @@
       </div>
     </header>
 
-    <div class="container mx-auto px-4 py-8 animate-fade-in main-content flex-grow">
+    <div
+      class="container mx-auto px-4 py-8 animate-fade-in main-content flex-grow"
+    >
       <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
-        <h1 class="text-2xl md:text-3xl font-bold text-center mb-8 text-gray-800">Order Summary</h1>
+        <h1
+          class="text-2xl md:text-3xl font-bold text-center mb-8 text-gray-800"
+        >
+          Order Summary
+        </h1>
 
         <div class="grid md:grid-cols-2 gap-8">
           <!-- User Information Form -->
           <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700">Delivery Information</h2>
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">
+              Delivery Information
+            </h2>
             <form id="orderForm" class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Name *</label
+                >
                 <input
                   type="text"
                   name="name"
@@ -183,7 +229,9 @@
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Phone Number *</label
+                >
                 <input
                   type="tel"
                   name="phone"
@@ -193,7 +241,9 @@
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Address *</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Address *</label
+                >
                 <textarea
                   name="address"
                   required
@@ -203,7 +253,9 @@
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">City *</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1"
+                    >City *</label
+                  >
                   <input
                     type="text"
                     name="city"
@@ -212,14 +264,47 @@
                   />
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Pincode *</label>
-                  <input
-                    type="text"
-                    name="pincode"
-                    pattern="[0-9]{6}"
-                    required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-food-yellow focus:border-food-yellow"
-                  />
+                  <label class="block text-sm font-medium text-gray-700 mb-1"
+                    >Pincode *</label
+                  >
+                  <div class="relative">
+                    <input
+                      type="text"
+                      name="pincode"
+                      pattern="[0-9]{6}"
+                      maxlength="6"
+                      required
+                      class="w-full px-4 py-2 pr-24 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-food-yellow focus:border-food-yellow transition-all duration-300"
+                      placeholder="Enter 6-digit pincode"
+                    />
+                    <div
+                      class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-2"
+                    >
+                      <span id="pincodeStatus" class="text-xs hidden"></span>
+                      <button
+                        type="button"
+                        id="verifyPincodeBtn"
+                        onclick="verifyPincode()"
+                        class="text-gray-400 hover:text-food-yellow p-2 rounded-full transition"
+                        title="Click to verify pincode"
+                      >
+                        <i class="fas fa-check-circle text-xl"></i>
+                      </button>
+                      <button
+                        type="button"
+                        id="updatePincodeBtn"
+                        onclick="enablePincodeUpdate()"
+                        class="text-gray-400 hover:text-food-yellow p-2 rounded-full transition hidden"
+                        title="Update pincode"
+                      >
+                        <i class="fas fa-pencil-alt text-xl"></i>
+                      </button>
+                    </div>
+                    <div
+                      id="pincodeMessage"
+                      class="absolute left-0 -bottom-6 text-xs"
+                    ></div>
+                  </div>
                 </div>
               </div>
             </form>
@@ -248,48 +333,77 @@
             </div>
             <button
               onclick="placeOrder()"
-              class="w-full mt-6 bg-food-yellow text-white py-3 rounded-lg font-semibold hover:bg-yellow-500 transition btn-hover flex items-center justify-center min-h-[44px]"
+              id="placeOrderBtn"
+              disabled
+              class="w-full mt-6 bg-food-yellow text-white py-3 rounded-lg font-semibold hover:bg-yellow-500 transition btn-hover flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <i class="fas fa-shopping-cart mr-2"></i>
               Place Order & Pay Now
             </button>
+            <p
+              id="orderButtonMessage"
+              class="text-center text-sm text-gray-500 mt-2"
+            >
+              Please verify your pincode first
+            </p>
           </div>
         </div>
       </div>
     </div>
 
-    <footer class="bg-food-yellow text-white shadow-inner mt-auto border-t border-white/20 pt-3 pb-2">
+    <footer
+      class="bg-food-yellow text-white shadow-inner mt-auto border-t border-white/20 pt-3 pb-2"
+    >
       <div class="container mx-auto px-4">
         <div class="flex flex-col md:flex-row justify-between items-center">
           <div class="mb-2 md:mb-0 text-center md:text-left">
             <div class="flex items-center justify-center md:justify-start mb-2">
-              <img src="images/food-login.webp" alt="Food Login Logo" class="h-8 w-8 rounded-full border-2 border-white mr-2" />
-              <h2 class="text-xl font-bold tracking-wide">
-                Food Login
-              </h2>
+              <img
+                src="images/food-login.webp"
+                alt="Food Login Logo"
+                class="h-8 w-8 rounded-full border-2 border-white mr-2"
+              />
+              <h2 class="text-xl font-bold tracking-wide">Food Login</h2>
             </div>
           </div>
 
           <div class="flex flex-col items-center md:items-end">
             <div class="flex space-x-4 mb-2">
-              <a href="https://www.instagram.com/foodlogin_8" target="_blank" class="social-icon">
+              <a
+                href="https://www.instagram.com/foodlogin_8"
+                target="_blank"
+                class="social-icon"
+              >
                 <i class="fab fa-instagram text-xl"></i>
               </a>
-              <a href="https://www.youtube.com/@foodlogin_8" target="_blank" class="social-icon">
+              <a
+                href="https://www.youtube.com/@foodlogin_8"
+                target="_blank"
+                class="social-icon"
+              >
                 <i class="fab fa-youtube text-xl"></i>
               </a>
-              <a href="https://wa.me/916301972788" target="_blank" class="social-icon">
+              <a
+                href="https://wa.me/916301972788"
+                target="_blank"
+                class="social-icon"
+              >
                 <i class="fab fa-whatsapp text-xl"></i>
               </a>
             </div>
-            <p class="text-sm text-white/60">© 2024 Food Login. All rights reserved.</p>
+            <p class="text-sm text-white/60">
+              © 2024 Food Login. All rights reserved.
+            </p>
           </div>
         </div>
       </div>
     </footer>
 
     <!-- Notification Toast -->
-    <div id="notificationToast" class="hidden fixed bottom-4 right-4 z-50 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center">
+    <div
+      id="notificationToast"
+      class="hidden fixed bottom-4 right-4 z-50 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center"
+    >
       <i class="fas fa-exclamation-circle mr-2"></i>
       <span id="notificationMessage"></span>
     </div>
@@ -299,22 +413,26 @@
       function showNotification(message, isError = true) {
         const toast = document.getElementById("notificationToast");
         document.getElementById("notificationMessage").textContent = message;
-        
+
         // Set color based on notification type
-        toast.className = `fixed bottom-4 right-4 z-50 ${isError ? 'bg-red-500' : 'bg-green-500'} text-white px-6 py-3 rounded-lg shadow-lg flex items-center`;
-        
+        toast.className = `fixed bottom-4 right-4 z-50 ${
+          isError ? "bg-red-500" : "bg-green-500"
+        } text-white px-6 py-3 rounded-lg shadow-lg flex items-center`;
+
         // Show the toast
         toast.classList.remove("hidden");
-        
+
         // Hide after 3 seconds
         setTimeout(() => {
           toast.classList.add("hidden");
         }, 3000);
       }
-      
+
       // Show/hide loading overlay
       function toggleLoading(show) {
-        document.getElementById('loadingOverlay').classList.toggle('hidden', !show);
+        document
+          .getElementById("loadingOverlay")
+          .classList.toggle("hidden", !show);
       }
 
       // Load cart items from localStorage on page load
@@ -323,13 +441,15 @@
         const subtotalPriceEl = document.getElementById("subtotalPrice");
         const deliveryFeeEl = document.getElementById("deliveryFee");
         const finalTotalPriceEl = document.getElementById("finalTotalPrice");
-        const placeOrderBtn = document.querySelector('button[onclick="placeOrder()"]');
-        
+        const placeOrderBtn = document.querySelector(
+          'button[onclick="placeOrder()"]'
+        );
+
         const cart = JSON.parse(localStorage.getItem("cart") || "{}");
         const prices = JSON.parse(localStorage.getItem("prices") || "{}");
         let subtotal = 0;
-        
-        cartSummaryDiv.innerHTML = ''; // Clear loading message
+
+        cartSummaryDiv.innerHTML = ""; // Clear loading message
 
         if (Object.keys(cart).length === 0) {
           cartSummaryDiv.innerHTML = `<div class="text-center py-8">
@@ -338,32 +458,42 @@
             <a href="/" class="mt-4 inline-block bg-food-yellow text-white px-4 py-2 rounded-lg hover:bg-yellow-500 transition btn-hover">Go back to menu</a>
           </div>`;
           placeOrderBtn.disabled = true;
-          placeOrderBtn.classList.add('opacity-50', 'cursor-not-allowed');
-          subtotalPriceEl.textContent = '₹0';
-          deliveryFeeEl.textContent = '₹0';
-          finalTotalPriceEl.textContent = '₹0';
+          placeOrderBtn.classList.add("opacity-50", "cursor-not-allowed");
+          subtotalPriceEl.textContent = "₹0";
+          deliveryFeeEl.textContent = "₹0";
+          finalTotalPriceEl.textContent = "₹0";
           return;
         }
 
         Object.entries(cart).forEach(([key, quantity]) => {
           // Extract name and weight correctly, handling potential missing weight
-          const parts = key.split('-');
-          const itemName = parts.slice(0, -1).join('-') || parts[0]; // Join parts except last, or take first if only one part
-          const weight = parts.length > 1 && !/^\d/.test(parts[parts.length - 1]) ? parts[parts.length - 1] : "Single"; // Check if last part is weight
-          
+          const parts = key.split("-");
+          const itemName = parts.slice(0, -1).join("-") || parts[0]; // Join parts except last, or take first if only one part
+          const weight =
+            parts.length > 1 && !/^\d/.test(parts[parts.length - 1])
+              ? parts[parts.length - 1]
+              : "Single"; // Check if last part is weight
+
           const price = prices[key] || 0;
           const itemTotal = price * quantity;
           subtotal += itemTotal;
 
           const itemElement = document.createElement("div");
-          itemElement.className = "flex justify-between items-start border-b pb-3 mb-3"; // Adjusted spacing
+          itemElement.className =
+            "flex justify-between items-start border-b pb-3 mb-3"; // Adjusted spacing
           itemElement.innerHTML = `
             <div class="flex-grow pr-2">
               <p class="font-medium text-sm">${itemName}</p>
-              ${weight !== "Single" ? `<p class="text-xs text-gray-500">${weight}</p>` : ""}
+              ${
+                weight !== "Single"
+                  ? `<p class="text-xs text-gray-500">${weight}</p>`
+                  : ""
+              }
             </div>
             <div class="text-center w-12 text-sm">${quantity}</div>
-            <div class="text-right w-20 font-semibold text-sm">₹${itemTotal.toFixed(2)}</div>
+            <div class="text-right w-20 font-semibold text-sm">₹${itemTotal.toFixed(
+              2
+            )}</div>
           `;
           cartSummaryDiv.appendChild(itemElement);
         });
@@ -375,10 +505,153 @@
         subtotalPriceEl.textContent = `₹${subtotal.toFixed(2)}`;
         deliveryFeeEl.textContent = `₹${deliveryFee.toFixed(2)}`;
         finalTotalPriceEl.textContent = `₹${finalTotal.toFixed(2)}`;
-        
+
         placeOrderBtn.disabled = false;
-        placeOrderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        placeOrderBtn.classList.remove("opacity-50", "cursor-not-allowed");
       });
+
+      function enablePincodeUpdate() {
+        const pincodeInput = document.querySelector('input[name="pincode"]');
+        const verifyButton = document.getElementById("verifyPincodeBtn");
+        const updateButton = document.getElementById("updatePincodeBtn");
+        const placeOrderBtn = document.getElementById("placeOrderBtn");
+        const orderButtonMessage =
+          document.getElementById("orderButtonMessage");
+        const pincodeStatus = document.getElementById("pincodeStatus");
+
+        // Enable editing
+        pincodeInput.removeAttribute("readonly");
+        pincodeInput.classList.remove("bg-gray-50");
+        pincodeInput.focus();
+
+        // Show verify button, hide update button
+        verifyButton.classList.remove("hidden");
+        updateButton.classList.add("hidden");
+
+        // Reset status
+        pincodeStatus.classList.add("hidden");
+
+        // Disable order button
+        placeOrderBtn.disabled = true;
+        orderButtonMessage.classList.remove("hidden");
+
+        // Clear old pincode from localStorage
+        localStorage.removeItem("verifiedPincode");
+      }
+
+      async function verifyPincode() {
+        const pincodeInput = document.querySelector('input[name="pincode"]');
+        const pincode = pincodeInput.value.trim();
+        const verifyButton = document.getElementById("verifyPincodeBtn");
+        const updateButton = document.getElementById("updatePincodeBtn");
+        const placeOrderBtn = document.getElementById("placeOrderBtn");
+        const orderButtonMessage =
+          document.getElementById("orderButtonMessage");
+        const pincodeMessage = document.getElementById("pincodeMessage");
+        const pincodeStatus = document.getElementById("pincodeStatus");
+
+        if (!pincode || pincode.length !== 6 || !/^\d+$/.test(pincode)) {
+          showMessage(
+            pincodeMessage,
+            "Please enter a valid 6-digit pincode",
+            false
+          );
+          return;
+        }
+
+        try {
+          verifyButton.disabled = true;
+
+          const response = await fetch("/api/verify-pincode", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pincode }),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            // Store verified pincode
+            localStorage.setItem("verifiedPincode", pincode);
+
+            // Update delivery fee and total
+            const subtotal = parseFloat(
+              document
+                .getElementById("subtotalPrice")
+                .textContent.replace("₹", "")
+            );
+            document.getElementById(
+              "deliveryFee"
+            ).textContent = `₹${data.deliveryFee}`;
+            document.getElementById("finalTotalPrice").textContent = `₹${(
+              subtotal + data.deliveryFee
+            ).toFixed(2)}`;
+
+            // Update UI for success
+            pincodeInput.setAttribute("readonly", true);
+            pincodeInput.classList.add("bg-gray-50");
+            verifyButton.classList.add("hidden");
+            updateButton.classList.remove("hidden");
+
+            // Show verified status
+            pincodeStatus.textContent = "✓ Verified";
+            pincodeStatus.className = "text-xs text-green-500 font-medium";
+            pincodeStatus.classList.remove("hidden");
+
+            showMessage(pincodeMessage, "Pincode verified successfully!", true);
+
+            // Enable order button
+            placeOrderBtn.disabled = false;
+            orderButtonMessage.classList.add("hidden");
+          } else {
+            throw new Error(data.message || "Verification failed");
+          }
+        } catch (error) {
+          console.error("Pincode verification error:", error);
+          showMessage(
+            pincodeMessage,
+            error.message || "Failed to verify pincode. Please try again.",
+            false
+          );
+
+          // Show unverified status
+          pincodeStatus.textContent = "✗ Unverified";
+          pincodeStatus.className = "text-xs text-red-500 font-medium";
+          pincodeStatus.classList.remove("hidden");
+        } finally {
+          verifyButton.disabled = false;
+        }
+      }
+
+      function showMessage(element, message, isSuccess) {
+        element.textContent = message;
+        element.className = `absolute left-0 -bottom-6 text-xs ${
+          isSuccess ? "text-green-500" : "text-red-500"
+        }`;
+        setTimeout(() => {
+          element.textContent = "";
+        }, 3000);
+      }
+
+      // Add pincode verification check to placeOrder function
+      const originalPlaceOrder = placeOrder;
+      placeOrder = async function () {
+        const verifiedPincode = localStorage.getItem("verifiedPincode");
+        const currentPincode = document
+          .querySelector('input[name="pincode"]')
+          .value.trim();
+
+        if (!verifiedPincode || verifiedPincode !== currentPincode) {
+          showMessage(
+            document.getElementById("pincodeMessage"),
+            "Pincode updated. Please verify again before proceeding.",
+            false
+          );
+          return;
+        }
+
+        await originalPlaceOrder();
+      };
 
       async function placeOrder() {
         try {
@@ -393,7 +666,10 @@
           const prices = JSON.parse(localStorage.getItem("prices") || "{}");
 
           if (Object.keys(cart).length === 0) {
-            showNotification("Your cart is empty. Please add items to place an order.", true);
+            showNotification(
+              "Your cart is empty. Please add items to place an order.",
+              true
+            );
             setTimeout(() => {
               window.location.href = "/";
             }, 1500);
@@ -413,8 +689,14 @@
           });
 
           // Update total calculation to use calculated subtotal and delivery fee
-          const subtotal = parseFloat(document.getElementById('subtotalPrice').textContent.replace('₹', ''));
-          const deliveryFee = parseFloat(document.getElementById('deliveryFee').textContent.replace('₹', ''));
+          const subtotal = parseFloat(
+            document
+              .getElementById("subtotalPrice")
+              .textContent.replace("₹", "")
+          );
+          const deliveryFee = parseFloat(
+            document.getElementById("deliveryFee").textContent.replace("₹", "")
+          );
           const total = subtotal + deliveryFee; // Use calculated total
 
           const orderData = {
@@ -440,7 +722,7 @@
 
           if (!response.ok) throw new Error("Failed to create order");
           const orderResponse = await response.json();
-          
+
           toggleLoading(false);
 
           // Initialize Razorpay payment
@@ -455,7 +737,7 @@
             handler: async function (response) {
               try {
                 toggleLoading(true);
-                
+
                 const verifyResponse = await fetch("/verify-payment", {
                   method: "POST",
                   headers: {
@@ -483,7 +765,10 @@
                 }
               } catch (error) {
                 console.error("Payment verification error:", error);
-                showNotification("Payment verification failed. Please try again.", true);
+                showNotification(
+                  "Payment verification failed. Please try again.",
+                  true
+                );
               } finally {
                 toggleLoading(false);
               }
@@ -509,9 +794,11 @@
           toggleLoading(false);
         }
       }
-      
+
       // Add touchstart handling for better mobile responsiveness
-      document.addEventListener('touchstart', function() {}, {passive: true});
+      document.addEventListener("touchstart", function () {}, {
+        passive: true,
+      });
     </script>
   </body>
 </html>

@@ -285,4 +285,42 @@ app.post("/verify-payment", async (req, res) => {
   }
 });
 
+// Verify pincode and determine region
+app.post("/api/verify-pincode", async (req, res) => {
+  try {
+    const { pincode } = req.body;
+
+    if (!pincode || pincode.length !== 6 || !/^\d+$/.test(pincode)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid pincode format",
+      });
+    }
+
+    // Simple pincode-based region determination
+    // North India: Starting with 1,2,3
+    // South India: Starting with 5,6
+    const firstDigit = pincode.charAt(0);
+    const region = ["1", "2", "3"].includes(firstDigit)
+      ? "north"
+      : ["5", "6"].includes(firstDigit)
+      ? "south"
+      : "other";
+    const deliveryFee =
+      region === "north" ? 100 : region === "south" ? 90 : 120;
+
+    res.json({
+      success: true,
+      region,
+      deliveryFee,
+    });
+  } catch (error) {
+    console.error("Pincode verification error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to verify pincode",
+    });
+  }
+});
+
 export default app;
