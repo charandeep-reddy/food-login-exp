@@ -15,6 +15,7 @@
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -252,10 +253,7 @@
   <body class="bg-gray-50 min-h-screen">
     <div id="loadingOverlay" class="loading-overlay">
       <div class="flex flex-col items-center">
-        <svg class="animate-spin h-12 w-12 text-food-yellow mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 7.962 7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
+        <img src="images/loading-spinner.svg" alt="Loading..." class="animate-spin h-12 w-12 text-food-yellow mb-4" />
         <p class="text-gray-700 text-lg">Loading dashboard...</p>
       </div>
     </div>
@@ -433,10 +431,7 @@
                 <tr class="animate-pulse">
                   <td colspan="6" class="px-6 py-4">
                     <div class="flex items-center justify-center">
-                      <svg class="animate-spin h-5 w-5 text-food-yellow mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 7.962 7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
+                      <img src="images/loading-spinner.svg" alt="" class="animate-spin h-5 w-5 text-food-yellow mr-2" />
                       <span>Loading orders...</span>
                     </div>
                   </td>
@@ -539,10 +534,7 @@
         try {
           document.getElementById("refreshBtn").disabled = true;
           document.getElementById("refreshBtn").innerHTML = `
-            <svg class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
+            <img src="images/loading-spinner.svg" alt="" class="animate-spin h-4 w-4 mr-2" />
             Refreshing...
           `;
           const response = await fetch("/api/orders");
@@ -827,35 +819,144 @@
 
       function downloadOrderDetails() {
         if (!currentOrderDetails) return;
-
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
         const order = currentOrderDetails;
-        const orderDate = new Date(order.createdAt).toLocaleString();
-        let content = `Order Details - Food Login\n`;
-        content += `=============================\n`;
-        content += `Order ID: ${order._id}\n`;
-        content += `Date: ${orderDate}\n`;
-        content += `Status: ${order.paymentStatus || 'Pending'}\n\n`;
-        content += `Customer Information:\n`;
-        content += `---------------------\n`;
-        content += `Name: ${order.name}\n`;
-        content += `Phone: ${order.phone}\n`;
-        content += `Address: ${order.address}, ${order.city}, ${order.pincode}\n\n`;
-        content += `Order Items:\n`;
-        content += `------------\n`;
-        order.cartItems.forEach(item => {
-          content += `- ${item.name} ${item.weight ? `(${item.weight})` : ""} (Qty: ${item.qty}) - ₹${item.price}\n`;
+        const orderDate = new Date(order.createdAt).toLocaleString('en-IN', {
+          year: 'numeric', month: 'short', day: 'numeric', 
+          hour: '2-digit', minute: '2-digit'
         });
-        content += `\n=============================\n`;
-        content += `Total: ₹${order.total}\n`;
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const margin = 20;
+        let y = 20;
 
-        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `order_${order._id}.txt`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
+        // Set colors
+        doc.setDrawColor(255, 215, 0); // #FFD700 (food-yellow)
+        doc.setFillColor(255, 215, 0);
+
+        // Header with logo text and line
+        doc.setFontSize(24);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Food Login', pageWidth / 2, y, { align: 'center' });
+        y += 8;
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(100);
+        doc.text('Homemade Telugu Food', pageWidth / 2, y, { align: 'center' });
+        y += 8;
+        doc.setLineWidth(0.5);
+        doc.line(margin, y, pageWidth - margin, y);
+        y += 15;
+        doc.setTextColor(0);
+
+        // Order details in a box
+        doc.setDrawColor(200);
+        doc.setFillColor(250, 250, 250);
+        doc.roundedRect(margin, y, pageWidth - (margin * 2), 35, 3, 3, 'F');
+        y += 10;
+        
+        // Order info (left column)
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.text('Order Details:', margin + 10, y);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.text(`Order ID: ${order._id}`, margin + 10, y + 8);
+        doc.text(`Date: ${orderDate}`, margin + 10, y + 16);
+
+        // Customer info (right column)
+        const midPoint = pageWidth / 2;
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.text('Customer Details:', midPoint, y);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.text(`${order.name}`, midPoint, y + 8);
+        doc.text(`${order.phone}`, midPoint, y + 16);
+        y += 45;
+
+        // Delivery Address
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.text('Delivery Address:', margin, y);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        const address = doc.splitTextToSize(`${order.address}, ${order.city}, ${order.pincode}`, pageWidth - (margin * 2));
+        doc.text(address, margin, y + 8);
+        y += 20 + (address.length * 5);
+
+        // Items table header
+        doc.setFillColor(250, 250, 250);
+        doc.rect(margin, y, pageWidth - (margin * 2), 10, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10);
+        doc.text('Item', margin + 5, y + 7);
+        doc.text('Qty', pageWidth - margin - 60, y + 7);
+        doc.text('Price', pageWidth - margin - 25, y + 7);
+        y += 15;
+
+        // Items table rows
+        doc.setFont('helvetica', 'normal');
+        let total = 0;
+        order.cartItems.forEach(item => {
+          const itemName = item.name + (item.weight ? ` (${item.weight})` : '');
+          const itemLines = doc.splitTextToSize(itemName, pageWidth - margin - 90);
+          doc.text(itemLines, margin + 5, y);
+          doc.text(String(item.qty), pageWidth - margin - 60, y, { align: 'left' });
+          doc.text(`₹${item.price}`, pageWidth - margin - 25, y, { align: 'left' });
+          y += Math.max(itemLines.length * 7, 10);
+          total += item.price;
+        });
+
+        // Total section
+        y += 5;
+        doc.setDrawColor(200);
+        doc.setLineWidth(0.5);
+        doc.line(margin, y, pageWidth - margin, y);
+        y += 10;
+        doc.setFont('helvetica', 'bold');
+        
+        // Subtotal
+        doc.text('Subtotal:', pageWidth - margin - 70, y);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`₹${order.subtotal || total}`, pageWidth - margin - 25, y, { align: 'left' });
+        y += 8;
+        
+        // Delivery fee
+        if (order.deliveryFee) {
+          doc.setFont('helvetica', 'bold');
+          doc.text('Delivery Fee:', pageWidth - margin - 70, y);
+          doc.setFont('helvetica', 'normal');
+          doc.text(`₹${order.deliveryFee}`, pageWidth - margin - 25, y, { align: 'left' });
+          y += 8;
+        }
+        
+        // Total
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Total:', pageWidth - margin - 70, y);
+        doc.text(`₹${order.total}`, pageWidth - margin - 25, y, { align: 'left' });
+
+        // Footer
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(128);
+        const footerY = pageHeight - 20;
+        doc.text('Thank you for choosing Food Login!', pageWidth / 2, footerY - 5, { align: 'center' });
+        doc.text('Contact: +91 6301972788 | Instagram: @foodlogin_8', pageWidth / 2, footerY, { align: 'center' });
+
+        // Status watermark
+        doc.setFontSize(40);
+        doc.setTextColor(245, 245, 245);
+        doc.setFont('helvetica', 'bold');
+        doc.text(order.paymentStatus || 'PENDING', pageWidth / 2, pageHeight / 2, {
+          align: 'center',
+          angle: 45
+        });
+
+        // Save
+        doc.save(`food-login-order-${order._id}.pdf`);
       }
 
       document.addEventListener('touchstart', function() {}, {passive: true});
