@@ -285,4 +285,8 @@ app.post("/verify-payment", async (req, res) => {
   }
 });
 
+app.get("/get-razorpay-key", (req, res) => {
+  res.send(process.env.RAZORPAY_KEY_ID);
+});
+
 export default app;

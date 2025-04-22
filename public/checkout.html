@@ -244,56 +244,57 @@
               </div>
             </div>
             <button
-              onclick="placeOrder()"
-              class="w-full mt-6 bg-food-yellow text-white py-3 rounded-lg font-semibold hover:bg-yellow-500 transition btn-hover flex items-center justify-center min-h-[44px]"
+            onclick="placeOrder()"
+            class="w-full mt-6 bg-food-yellow text-white py-3 rounded-lg font-semibold hover:bg-yellow-500 transition btn-hover flex items-center justify-center min-h-[44px]"
             >
-              <i class="fas fa-shopping-cart mr-2"></i>
-              Place Order & Pay Now
-            </button>
-          </div>
+            <i class="fas fa-shopping-cart mr-2"></i>
+            Place Order & Pay Now
+          </button>
         </div>
       </div>
     </div>
-
-    <footer class="bg-food-yellow text-white shadow-inner mt-auto border-t border-white/20 pt-3 pb-2">
-      <div class="container mx-auto px-4">
-        <div class="flex flex-col md:flex-row justify-between items-center">
-          <div class="mb-2 md:mb-0 text-center md:text-left">
-            <div class="flex items-center justify-center md:justify-start mb-2">
-              <img src="images/food-login.webp" alt="Food Login Logo" class="h-8 w-8 rounded-full border-2 border-white mr-2" />
-              <h2 class="text-xl font-bold tracking-wide">
-                Food Login
-              </h2>
-            </div>
-          </div>
-
-          <div class="flex flex-col items-center md:items-end">
-            <div class="flex space-x-4 mb-2">
-              <a href="https://www.instagram.com/foodlogin_8" target="_blank" class="social-icon">
-                <i class="fab fa-instagram text-xl"></i>
-              </a>
-              <a href="https://www.youtube.com/@foodlogin_8" target="_blank" class="social-icon">
-                <i class="fab fa-youtube text-xl"></i>
-              </a>
-              <a href="https://wa.me/916301972788" target="_blank" class="social-icon">
-                <i class="fab fa-whatsapp text-xl"></i>
-              </a>
-            </div>
-            <p class="text-sm text-white/60">© 2024 Food Login. All rights reserved.</p>
+  </div>
+  
+  <footer class="bg-food-yellow text-white shadow-inner mt-auto border-t border-white/20 pt-3 pb-2">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-2 md:mb-0 text-center md:text-left">
+          <div class="flex items-center justify-center md:justify-start mb-2">
+            <img src="images/food-login.webp" alt="Food Login Logo" class="h-8 w-8 rounded-full border-2 border-white mr-2" />
+            <h2 class="text-xl font-bold tracking-wide">
+              Food Login
+            </h2>
           </div>
         </div>
+        
+        <div class="flex flex-col items-center md:items-end">
+          <div class="flex space-x-4 mb-2">
+            <a href="https://www.instagram.com/foodlogin_8" target="_blank" class="social-icon">
+              <i class="fab fa-instagram text-xl"></i>
+            </a>
+            <a href="https://www.youtube.com/@foodlogin_8" target="_blank" class="social-icon">
+              <i class="fab fa-youtube text-xl"></i>
+            </a>
+            <a href="https://wa.me/916301972788" target="_blank" class="social-icon">
+              <i class="fab fa-whatsapp text-xl"></i>
+            </a>
+          </div>
+          <p class="text-sm text-white/60">© 2024 Food Login. All rights reserved.</p>
+        </div>
       </div>
-    </footer>
-
-    <!-- Notification Toast -->
-    <div id="notificationToast" class="hidden fixed bottom-4 right-4 z-50 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center">
-      <i class="fas fa-exclamation-circle mr-2"></i>
-      <span id="notificationMessage"></span>
     </div>
-
-    <script>
-      // Show notification
-      function showNotification(message, isError = true) {
+  </footer>
+  
+  <!-- Notification Toast -->
+  <div id="notificationToast" class="hidden fixed bottom-4 right-4 z-50 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center">
+    <i class="fas fa-exclamation-circle mr-2"></i>
+    <span id="notificationMessage"></span>
+  </div>
+  
+  <script>
+    
+    // Show notification
+    function showNotification(message, isError = true) {
         const toast = document.getElementById("notificationToast");
         document.getElementById("notificationMessage").textContent = message;
         
@@ -440,9 +441,10 @@
           
           toggleLoading(false);
 
+
           // Initialize Razorpay payment
           const options = {
-            key: "rzp_test_mvLbeeuphHnK5C", // Your Razorpay test key
+            key: await fetch("/get-razorpay-key").then(response => response.text()), // Fetch Razorpay key securely
             amount: orderResponse.amount,
             currency: "INR",
             name: "Food Login",
