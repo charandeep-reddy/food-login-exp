@@ -969,6 +969,44 @@
       });
       
       fetchOrders();
+
+      // Add event listener for live search
+      document.getElementById('searchInput').addEventListener('input', () => {
+        filterAndDisplayOrders();
+      });
+
+      // Function to filter and display orders based on search input
+      function filterAndDisplayOrders() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+        // Use the locally scoped 'orders' variable directly, instead of window.orders
+        if (!orders) return; // Check if the local 'orders' array is available
+
+        const filteredOrders = orders.filter(order => { // Use the local 'orders' variable
+          // Create a searchable string with relevant order details
+          const searchFields = [
+            order._id,
+            order.name,
+            order.phone,
+            order.address,
+            order.city,
+            order.pincode,
+            String(order.total), // Convert total to string
+            order.paymentStatus || '', // Include payment status
+            ...order.cartItems.map(item => item.name) // Include item names
+          ];
+          
+          // Check if any field contains the search term
+          return searchFields.some(field => 
+            String(field).toLowerCase().includes(searchTerm)
+          );
+        });
+
+        displayOrders(filteredOrders); // Re-display orders with the filtered list
+        
+        // Update the displayed count to reflect the filtered results
+        document.getElementById("orderCount").textContent = filteredOrders.length;
+      }
+
     </script>
   </body>
 </html>
